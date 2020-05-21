@@ -124,11 +124,13 @@ public class TransactionHolder extends BinderViewHolder<Transaction>
       Transaction.TransactionStatus transactionStatus, TransactionDetails details) {
     boolean isSent = from.toLowerCase()
         .equals(defaultAddress);
-
+    boolean isApp = false;
+    boolean isBonus = false;
     TransactionDetails.Icon icon;
     String uri = null;
     if (details != null) {
       icon = details.getIcon();
+      isApp = details.getSourceName() != null;
       switch (icon.getType()) {
         case FILE:
           uri = "file:" + icon.getUri();
@@ -139,38 +141,46 @@ public class TransactionHolder extends BinderViewHolder<Transaction>
       }
     }
 
-    int transactionTypeIcon;
+    int transactionTypeIcon = R.drawable.ic_transaction_peer;
     switch (transaction.getType()) {
-      case IAB:
       case IAP_OFFCHAIN:
-        transactionTypeIcon = R.drawable.ic_transaction_iab;
-        setTypeIconVisibilityBasedOnDescription(details, uri);
+        transactionTypeIcon = R.drawable.ic_tx_iap_hybrid;
         break;
       case ADS:
+        transactionTypeIcon = R.drawable.ic_tx_poa;
+        currencySymbol = WalletCurrency.CREDITS.getSymbol();
+        break;
       case ADS_OFFCHAIN:
-        transactionTypeIcon = R.drawable.ic_transaction_poa;
-        setTypeIconVisibilityBasedOnDescription(details, uri);
+        transactionTypeIcon = R.drawable.ic_tx_poa_hybrid;
         currencySymbol = WalletCurrency.CREDITS.getSymbol();
         break;
       case BONUS:
         typeIcon.setVisibility(View.GONE);
-        transactionTypeIcon = R.drawable.ic_transaction_peer;
+        transactionTypeIcon = R.drawable.ic_tx_bonus;
+        isBonus = true;
         currencySymbol = WalletCurrency.CREDITS.getSymbol();
         break;
       case TOP_UP:
         typeIcon.setVisibility(View.GONE);
-        transactionTypeIcon = R.drawable.transaction_type_top_up;
+        transactionTypeIcon = R.drawable.ic_tx_topup;
         currencySymbol = WalletCurrency.CREDITS.getSymbol();
         break;
       case TRANSFER_OFF_CHAIN:
         typeIcon.setVisibility(View.GONE);
-        transactionTypeIcon = R.drawable.transaction_type_transfer_off_chain;
+        transactionTypeIcon = R.drawable.ic_tx_transfer_hybrid;
         currencySymbol = WalletCurrency.CREDITS.getSymbol();
         break;
-      default:
-        transactionTypeIcon = R.drawable.ic_transaction_peer;
-        setTypeIconVisibilityBasedOnDescription(details, uri);
+      case IAB:
+      case ETHER_TRANSFER:
+      case STANDARD:
+        if (isApp) {
+          transactionTypeIcon = R.drawable.ic_tx_iap;
+        } else {
+          transactionTypeIcon = R.drawable.ic_tx_transfer;
+        }
+        break;
     }
+    setTypeIconVisibilityBasedOnDescription(isApp, isBonus, uri);
 
     if (details != null) {
       if (transaction.getType()
@@ -193,30 +203,11 @@ public class TransactionHolder extends BinderViewHolder<Transaction>
     }
 
     int finalTransactionTypeIcon = transactionTypeIcon;
-
-    GlideApp.with(getContext())
-        .load(uri)
-        .apply(RequestOptions.bitmapTransform(new CircleCrop())
-            .placeholder(finalTransactionTypeIcon)
-            .error(transactionTypeIcon))
-        .listener(new RequestListener<Drawable>() {
-
-          @Override public boolean onLoadFailed(@Nullable GlideException e, Object model,
-              Target<Drawable> target, boolean isFirstResource) {
-            typeIcon.setVisibility(View.GONE);
-            return false;
-          }
-
-          @Override
-          public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target,
-              DataSource dataSource, boolean isFirstResource) {
-            ((ImageView) typeIcon.findViewById(R.id.icon)).setImageResource(
-                finalTransactionTypeIcon);
-            return false;
-          }
-        })
-        .into(srcImage);
-
+    if (uri != null && isApp && !isBonus) {
+      loadAppImage(uri, finalTransactionTypeIcon, transactionTypeIcon);
+    } else {
+      srcImage.setImageResource(finalTransactionTypeIcon);
+    }
     int statusText = R.string.transaction_status_success;
     int statusColor = R.color.green;
 
@@ -245,6 +236,31 @@ public class TransactionHolder extends BinderViewHolder<Transaction>
     this.value.setText(valueStr);
   }
 
+  private void loadAppImage(String uri, int finalTransactionTypeIcon, int transactionTypeIcon) {
+    GlideApp.with(getContext())
+        .load(uri)
+        .apply(RequestOptions.bitmapTransform(new CircleCrop())
+            .placeholder(finalTransactionTypeIcon)
+            .error(transactionTypeIcon))
+        .listener(new RequestListener<Drawable>() {
+
+          @Override public boolean onLoadFailed(@Nullable GlideException e, Object model,
+              Target<Drawable> target, boolean isFirstResource) {
+            typeIcon.setVisibility(View.GONE);
+            return false;
+          }
+
+          @Override
+          public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target,
+              DataSource dataSource, boolean isFirstResource) {
+            ((ImageView) typeIcon.findViewById(R.id.icon)).setImageResource(
+                finalTransactionTypeIcon);
+            return false;
+          }
+        })
+        .into(srcImage);
+  }
+
   private String getSourceText(Transaction transaction) {
     if (transaction.getType()
         .equals(Transaction.TransactionType.BONUS)) {
@@ -256,8 +272,8 @@ public class TransactionHolder extends BinderViewHolder<Transaction>
         .getSourceName();
   }
 
-  private void setTypeIconVisibilityBasedOnDescription(TransactionDetails details, String uri) {
-    if (uri == null || details.getSourceName() == null) {
+  private void setTypeIconVisibilityBasedOnDescription(boolean isApp, boolean isBonus, String uri) {
+    if (uri == null || !isApp || isBonus) {
       typeIcon.setVisibility(View.GONE);
     } else {
       typeIcon.setVisibility(View.VISIBLE);

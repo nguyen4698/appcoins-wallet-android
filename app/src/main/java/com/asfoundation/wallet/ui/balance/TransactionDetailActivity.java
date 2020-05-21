@@ -44,6 +44,7 @@ public class TransactionDetailActivity extends BaseActivity {
 
   private static final int DECIMALS = 18;
   @Inject TransactionDetailViewModelFactory transactionDetailViewModelFactory;
+  @Inject CurrencyFormatUtils formatter;
   private TransactionDetailViewModel viewModel;
   private Transaction transaction;
   private boolean isSent = false;
@@ -52,7 +53,6 @@ public class TransactionDetailActivity extends BaseActivity {
   private RecyclerView detailsList;
   private Dialog dialog;
   private CompositeDisposable disposables;
-  @Inject CurrencyFormatUtils formatter;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -121,6 +121,8 @@ public class TransactionDetailActivity extends BaseActivity {
 
     String icon = null;
     String id = null;
+    boolean isApp = false;
+    boolean isBonus = false;
     String description = null;
     String to = null;
     TransactionDetails details = transaction.getDetails();
@@ -129,22 +131,23 @@ public class TransactionDetailActivity extends BaseActivity {
       icon = details.getIcon()
           .getUri();
       id = details.getSourceName();
+      isApp = details.getDescription() != null;
       description = details.getDescription();
     }
 
     @StringRes int typeStr = R.string.transaction_type_standard;
     @DrawableRes int typeIcon = R.drawable.ic_transaction_peer;
     View button = findViewById(R.id.more_detail);
-    View categorybackground = findViewById(R.id.category_icon_background);
+    View categoryBackground = findViewById(R.id.category_icon_background);
 
     switch (transaction.getType()) {
       case ADS:
         typeStr = R.string.transaction_type_poa;
-        typeIcon = R.drawable.ic_transaction_poa;
+        typeIcon = R.drawable.ic_tx_poa;
         break;
       case ADS_OFFCHAIN:
         typeStr = R.string.transaction_type_poa_offchain;
-        typeIcon = R.drawable.ic_transaction_poa;
+        typeIcon = R.drawable.ic_tx_poa_hybrid;
         button.setVisibility(View.VISIBLE);
         button.setOnClickListener(
             view -> viewModel.showMoreDetailsBds(view.getContext(), transaction));
@@ -154,14 +157,15 @@ public class TransactionDetailActivity extends BaseActivity {
         button.setVisibility(View.VISIBLE);
         to = transaction.getTo();
         typeStr = R.string.transaction_type_iab;
-        typeIcon = R.drawable.ic_transaction_iab;
+        typeIcon = R.drawable.ic_tx_iap_hybrid;
         button.setOnClickListener(
             view -> viewModel.showMoreDetailsBds(view.getContext(), transaction));
         break;
       case BONUS:
         button.setVisibility(View.VISIBLE);
         typeStr = R.string.transaction_type_bonus;
-        typeIcon = -1;
+        typeIcon = R.drawable.ic_tx_bonus;
+        isBonus = true;
         if (transaction.getDetails()
             .getSourceName() == null) {
           id = getString(R.string.transaction_type_bonus);
@@ -176,18 +180,27 @@ public class TransactionDetailActivity extends BaseActivity {
       case TOP_UP:
         typeStr = R.string.topup_title;
         id = getString(R.string.topup_title);
-        categorybackground.setBackground(null);
-        typeIcon = R.drawable.transaction_type_top_up;
+        categoryBackground.setBackground(null);
+        typeIcon = R.drawable.ic_tx_topup;
         button.setVisibility(View.VISIBLE);
         button.setOnClickListener(
             view -> viewModel.showMoreDetailsBds(view.getContext(), transaction));
         symbol = getString(R.string.p2p_send_currency_appc_c);
         break;
+      case IAB:
+      case STANDARD:
+      case ETHER_TRANSFER:
+        if (isApp) {
+          typeIcon = R.drawable.ic_tx_iap;
+        } else {
+          typeIcon = R.drawable.ic_tx_transfer;
+        }
+        break;
       case TRANSFER_OFF_CHAIN:
         typeStr = R.string.transaction_type_p2p;
         id = isSent ? "Transfer Sent" : getString(R.string.askafriend_received_title);
-        typeIcon = R.drawable.transaction_type_transfer_off_chain;
-        categorybackground.setBackground(null);
+        typeIcon = R.drawable.ic_tx_transfer_hybrid;
+        categoryBackground.setBackground(null);
         to = transaction.getTo();
         button.setVisibility(View.VISIBLE);
         button.setOnClickListener(
@@ -211,7 +224,7 @@ public class TransactionDetailActivity extends BaseActivity {
     }
 
     setUIContent(transaction.getTimeStamp(), getValue(symbol), symbol, icon, id, description,
-        typeStr, typeIcon, statusStr, statusColor, to, isSent);
+        typeStr, typeIcon, statusStr, statusColor, to, isSent, isApp, isBonus);
   }
 
   private void onDefaultNetwork(NetworkInfo networkInfo) {
@@ -243,14 +256,14 @@ public class TransactionDetailActivity extends BaseActivity {
 
   private void setUIContent(long timeStamp, String value, String symbol, String icon, String id,
       String description, int typeStr, int typeIcon, int statusStr, int statusColor, String to,
-      boolean isSent) {
+      boolean isSent, boolean isApp, boolean isBonus) {
     ((TextView) findViewById(R.id.transaction_timestamp)).setText(getDate(timeStamp));
     findViewById(R.id.transaction_timestamp).setVisibility(View.VISIBLE);
 
     formatValue(value, symbol);
 
     ImageView typeIconImageView = findViewById(R.id.img);
-    if (icon != null) {
+    if (icon != null && isApp && !isBonus) {
       String path;
       if (icon.startsWith("http://") || icon.startsWith("https://")) {
         path = icon;
@@ -265,7 +278,11 @@ public class TransactionDetailActivity extends BaseActivity {
           .into(typeIconImageView);
     } else {
       if (typeIcon != -1) {
-        typeIconImageView.setImageResource(typeIcon);
+        GlideApp.with(this)
+            .load(typeIcon)
+            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(typeIconImageView);
         typeIconImageView.setVisibility(View.VISIBLE);
       } else {
         typeIconImageView.setVisibility(View.GONE);

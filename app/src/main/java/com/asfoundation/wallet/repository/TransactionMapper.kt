@@ -11,8 +11,7 @@ import java.math.BigDecimal
 
 class TransactionMapper {
 
-  fun map(
-      transactions: List<TransactionEntity>): List<Transaction> {
+  fun map(transactions: List<TransactionEntity>): List<Transaction> {
     return transactions.map { map(it) }
   }
 

@@ -184,7 +184,7 @@
             android:layout_height="16dp"
             android:layout_gravity="center"
             android:contentDescription="@string/empty"
-            android:src="@drawable/ic_transaction_iab"
+            tools:src="@drawable/ic_tx_iap"
             />
       </FrameLayout>
 
