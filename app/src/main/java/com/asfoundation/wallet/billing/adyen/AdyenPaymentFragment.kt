@@ -15,7 +15,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import com.adyen.checkout.adyen3ds2.Adyen3DS2Component
 import com.adyen.checkout.base.model.payments.response.Action
@@ -169,10 +168,6 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
     buy_button.visibility = VISIBLE
     cancel_button.visibility = VISIBLE
 
-    val color = ResourcesCompat.getColor(resources, R.color.btn_end_gradient_color, null)
-    adyenCardNumberLayout.boxStrokeColor = color
-    adyenExpiryDateLayout.boxStrokeColor = color
-    adyenSecurityCodeLayout.boxStrokeColor = color
     handleLayoutVisibility(isStored)
     prepareCardComponent(paymentMethod, forget, savedInstance)
     setStoredPaymentInformation(isStored)
