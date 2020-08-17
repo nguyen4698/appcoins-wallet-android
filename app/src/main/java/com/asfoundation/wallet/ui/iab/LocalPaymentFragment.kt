@@ -260,8 +260,6 @@ class LocalPaymentFragment : DaggerFragment(), LocalPaymentView {
     } else {
       complete_payment_view.lottie_transaction_success.setAnimation(R.raw.top_up_success_animation)
     }
-
-    iabView.disableBack()
   }
 
   override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -401,6 +399,10 @@ class LocalPaymentFragment : DaggerFragment(), LocalPaymentView {
 
   override fun lockRotation() {
     iabView.lockRotation()
+  }
+
+  override fun disableBack() {
+    iabView.disableBack()
   }
 
   private fun playAnimation() {

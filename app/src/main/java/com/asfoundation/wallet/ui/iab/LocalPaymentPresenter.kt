@@ -208,6 +208,7 @@ class LocalPaymentPresenter(private val view: LocalPaymentView,
   }
 
   private fun handleAsyncTransactionStatus(transaction: Transaction): Completable {
+    view.disableBack()
     return when (transaction.status) {
       Status.PENDING_USER_PAYMENT -> {
         Completable.fromAction {

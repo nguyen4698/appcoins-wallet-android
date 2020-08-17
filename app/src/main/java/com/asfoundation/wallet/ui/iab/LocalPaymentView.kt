@@ -31,6 +31,8 @@ interface LocalPaymentView {
 
   fun lockRotation()
 
+  fun disableBack()
+
   fun getSupportLogoClicks(): Observable<Any>
 
   fun getSupportIconClicks(): Observable<Any>
