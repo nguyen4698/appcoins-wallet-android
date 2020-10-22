@@ -287,8 +287,7 @@ class PaymentMethodsPresenter(
                     transaction.amount()), paymentMethodsInteract.getUserStatus(),
                     gamificationInteractor.getLevels(),
                     Function3 { earningBonus: ForecastBonusAndLevel, userStats: GamificationStats, levels: Levels ->
-                      PaymentGamificationInfo(earningBonus, userStats, levels,
-                          BigDecimal(transactionValue))
+                      PaymentGamificationInfo(earningBonus, userStats, levels)
                     })
                     .observeOn(viewScheduler)
                     .flatMapCompletable {
@@ -321,7 +320,7 @@ class PaymentMethodsPresenter(
       setGamificationInfo(paymentGamificationInfo.earningBonus.level)
       if (shouldShowLevelUp(paymentGamificationInfo.levels, paymentGamificationInfo.userStats)) {
         setupNextLevelInformation(paymentGamificationInfo.userStats, paymentGamificationInfo.levels,
-            paymentGamificationInfo.paymentAppcAmount, bonusMessage)
+            BigDecimal(transactionValue), bonusMessage)
       } else {
         view.setupLegacyBonusInformation(bonusMessage)
       }

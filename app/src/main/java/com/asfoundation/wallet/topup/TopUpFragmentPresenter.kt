@@ -252,13 +252,13 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
   }
 
   private fun loadBonusIntoView(appPackage: String, amount: String,
-                                currency: String): Completable {
+                                currency: String, appcValue: String): Completable {
     return interactor.convertLocal(currency, amount, 18)
         .flatMapSingle {
           Single.zip(interactor.getEarningBonus(appPackage, it.amount),
               interactor.getUserStatus(), interactor.getLevels(),
               Function3 { earningBonus: ForecastBonusAndLevel, userStats: GamificationStats, levels: Levels ->
-                PaymentGamificationInfo(earningBonus, userStats, levels, it.amount)
+                PaymentGamificationInfo(earningBonus, userStats, levels)
               })
         }
         .subscribeOn(networkScheduler)
@@ -268,7 +268,7 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
           if (interactor.isBonusValidAndActive(it.earningBonus)) {
             val scaledBonus = formatter.scaleFiat(it.earningBonus.amount)
             if (shouldShowLevelUp(it.userStats, it.levels)) {
-              setupNextLevelInformation(it.userStats, it.levels, it.paymentAppcAmount, scaledBonus,
+              setupNextLevelInformation(it.userStats, it.levels, BigDecimal(appcValue), scaledBonus,
                   it.earningBonus.currency)
             } else {
               view.showLegacyBonus(scaledBonus, it.earningBonus.currency)
@@ -326,18 +326,19 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
       handleInvalidFormatInput()
     }
     return updateUiInformation(packageName, limitValues,
-        topUpData.currency.fiatValue, topUpData.currency.fiatCurrencyCode)
+        topUpData.currency.fiatValue, topUpData.currency.fiatCurrencyCode,
+        topUpData.currency.appcValue)
   }
 
-  private fun updateUiInformation(appPackage: String,
-                                  limitValues: TopUpLimitValues, fiatAmount: String,
-                                  currency: String): Completable {
+  private fun updateUiInformation(appPackage: String, limitValues: TopUpLimitValues,
+                                  fiatAmount: String, currency: String,
+                                  appcValue: String): Completable {
     return if (isValueInRange(limitValues, fiatAmount.toDouble())) {
       view.changeMainValueColor(true)
       view.hidePaymentMethods()
       if (interactor.isBonusValidAndActive()) view.showBonusSkeletons()
       retrievePaymentMethods(fiatAmount, currency)
-          .andThen(loadBonusIntoView(appPackage, fiatAmount, currency))
+          .andThen(loadBonusIntoView(appPackage, fiatAmount, currency, appcValue))
     } else {
       view.hideBonusAndSkeletons()
       view.changeMainValueColor(false)
