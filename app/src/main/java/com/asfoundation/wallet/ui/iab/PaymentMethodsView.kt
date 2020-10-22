@@ -63,7 +63,7 @@ interface PaymentMethodsView {
   fun showLocalPayment(selectedPaymentMethod: String, iconUrl: String, label: String,
                        gamificationLevel: Int)
 
-  fun setBonus(bonus: BigDecimal, currency: String)
+  fun setupLegacyBonusInformation(bonusMessage: String)
 
   fun onBackPressed(): Observable<Boolean>
 
@@ -94,7 +94,8 @@ interface PaymentMethodsView {
 
   fun setLevelUpInformation(gamificationLevel: Int, progress: Double,
                             currentLevelBackground: Drawable?, nextLevelBackground: Drawable?,
-                            levelColor: Int, willLevelUp: Boolean, leftAmount: BigDecimal)
+                            levelColor: Int, willLevelUp: Boolean, leftAmount: BigDecimal,
+                            bonusMessage: String)
 
   fun showLevelUp()
 

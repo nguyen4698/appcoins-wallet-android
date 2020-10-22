@@ -496,16 +496,8 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
         gamificationLevel)
   }
 
-  override fun setBonus(bonus: BigDecimal, currency: String) {
-    var scaledBonus = bonus.stripTrailingZeros()
-        .setScale(CurrencyFormatUtils.FIAT_SCALE, BigDecimal.ROUND_DOWN)
-    var newCurrencyString = currency
-    if (scaledBonus < BigDecimal("0.01")) {
-      newCurrencyString = "~$currency"
-    }
-    scaledBonus = scaledBonus.max(BigDecimal("0.01"))
-    val formattedBonus = formatter.formatCurrency(scaledBonus, WalletCurrency.FIAT)
-    bonusMessageValue = newCurrencyString + formattedBonus
+  override fun setupLegacyBonusInformation(bonusMessage: String) {
+    bonusMessageValue = bonusMessage
     bonus_value.text = getString(R.string.gamification_purchase_header_part_2, bonusMessageValue)
   }
 
@@ -534,10 +526,10 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
 
   override fun setLevelUpInformation(gamificationLevel: Int, progress: Double,
                                      currentLevelBackground: Drawable?,
-                                     nextLevelBackground: Drawable?,
-                                     levelColor: Int,
-                                     willLevelUp: Boolean,
-                                     leftAmount: BigDecimal) {
+                                     nextLevelBackground: Drawable?, levelColor: Int,
+                                     willLevelUp: Boolean, leftAmount: BigDecimal,
+                                     bonusMessage: String) {
+    bonusMessageValue = bonusMessage
     if (willLevelUp) {
       level_up_bonus_layout.information_message.text =
           getString(R.string.perks_level_up_on_this_purchase)

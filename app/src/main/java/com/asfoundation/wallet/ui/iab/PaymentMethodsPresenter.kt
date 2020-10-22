@@ -63,17 +63,19 @@ class PaymentMethodsPresenter(
     private val mapper: GamificationMapper) {
 
   private var cachedGamificationLevel = 0
-  private var closeToLevelUp: Boolean = false
-  private var shouldHandlePreselected = true
+  private var shouldShowLevelUp: Boolean = false
+  private var hasStartedAuth = false
 
   companion object {
     private val TAG = PaymentMethodsPresenter::class.java.name
     private const val GAMIFICATION_LEVEL = "gamification_level"
+    private const val SHOW_LEVEL_UP_KEY = "show_level_up"
   }
 
   fun present(savedInstanceState: Bundle?) {
     savedInstanceState?.let {
-      cachedGamificationLevel = savedInstanceState.getInt(GAMIFICATION_LEVEL)
+      cachedGamificationLevel = it.getInt(GAMIFICATION_LEVEL)
+      shouldShowLevelUp = it.getBoolean(SHOW_LEVEL_UP_KEY)
     }
     handleOnGoingPurchases()
     handleCancelClick()
@@ -143,6 +145,7 @@ class PaymentMethodsPresenter(
     disposables.add(activity!!.onAuthenticationResult()
         .observeOn(viewScheduler)
         .doOnNext {
+          hasStartedAuth = false
           if (!it.isSuccess) {
             view.hideLoading()
             if (it.paymentNavigationData.isPreselected && paymentMethodsMapper.map(
@@ -284,19 +287,15 @@ class PaymentMethodsPresenter(
                     transaction.amount()), paymentMethodsInteract.getUserStatus(),
                     gamificationInteractor.getLevels(),
                     Function3 { earningBonus: ForecastBonusAndLevel, userStats: GamificationStats, levels: Levels ->
-                      Triple(earningBonus, userStats, levels)
+                      UserGamificationInfo(earningBonus, userStats, levels)
                     })
                     .observeOn(viewScheduler)
                     .flatMapCompletable {
                       Completable.fromAction {
-                        setupBonusInformation(it.first)
-                        if (paymentMethodsInteract.isBonusActiveAndValid(it.first)) {
-                          setUpNextLevelInformation(it.second, it.third, transactionValue)
-                        }
-                        if (shouldHandlePreselected) {
+                        handleBonusLayout(it)
+                        if (!hasStartedAuth) {
                           selectPaymentMethod(paymentMethods, fiatValue,
-                              paymentMethodsInteract.isBonusActiveAndValid(it.first))
-                          shouldHandlePreselected = false
+                              paymentMethodsInteract.isBonusActiveAndValid(it.earningBonus))
                         }
                       }
                     }
@@ -311,31 +310,61 @@ class PaymentMethodsPresenter(
         .subscribe({ }, { this.showError(it) }))
   }
 
-  private fun setUpNextLevelInformation(userStats: GamificationStats, levels: Levels,
-                                        transactionValue: Double) {
-    val progress = getProgressPercentage(userStats, levels.list)
-    if (shouldShowNextLevel(levels, progress, userStats)) {
-      closeToLevelUp = true
-      val currentLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel)
-      val nextLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel + 1)
-      view.setLevelUpInformation(cachedGamificationLevel, progress,
-          mapper.getRectangleGamificationBackground(currentLevelInfo.levelColor),
-          mapper.getRectangleGamificationBackground(nextLevelInfo.levelColor),
-          currentLevelInfo.levelColor, willLevelUp(userStats, transactionValue),
-          userStats.nextLevelAmount!!.minus(userStats.totalSpend))
+  private fun handleBonusLayout(userGamificationInfo: UserGamificationInfo) {
+    if (paymentMethodsInteract.isBonusActiveAndValid(userGamificationInfo.earningBonus)) {
+      val bonusMessage =
+          buildBonusMessage(userGamificationInfo.earningBonus.amount,
+              userGamificationInfo.earningBonus.currency)
+      setGamificationInfo(userGamificationInfo.earningBonus.level)
+      if (shouldShowLevelUp(userGamificationInfo.levels, userGamificationInfo.userStats)) {
+        setupNextLevelInformation(userGamificationInfo.userStats, userGamificationInfo.levels,
+            transactionValue, bonusMessage)
+      } else {
+        view.setupLegacyBonusInformation(bonusMessage)
+      }
     } else {
-      closeToLevelUp = false
+      view.removeBonus()
     }
+  }
+
+  private fun setGamificationInfo(level: Int) {
+    cachedGamificationLevel = level
+    analyticsSetup.setGamificationLevel(cachedGamificationLevel)
+    amplitudeAnalytics.setGamificationLevel(cachedGamificationLevel)
+  }
+
+  private fun buildBonusMessage(amount: BigDecimal, currency: String): String {
+    var scaledBonus = amount.stripTrailingZeros()
+        .setScale(CurrencyFormatUtils.FIAT_SCALE, BigDecimal.ROUND_DOWN)
+    var newCurrencyString = currency
+    if (scaledBonus < BigDecimal("0.01")) {
+      newCurrencyString = "~$currency"
+    }
+    scaledBonus = scaledBonus.max(BigDecimal("0.01"))
+    val formattedBonus = formatter.formatCurrency(scaledBonus, WalletCurrency.FIAT)
+    return newCurrencyString + formattedBonus
+  }
+
+  private fun setupNextLevelInformation(userStats: GamificationStats, levels: Levels,
+                                        transactionValue: Double, bonusMessage: String) {
+    val progress = getProgressPercentage(userStats, levels.list)
+    val currentLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel)
+    val nextLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel + 1)
+    view.setLevelUpInformation(cachedGamificationLevel, progress,
+        mapper.getRectangleGamificationBackground(currentLevelInfo.levelColor),
+        mapper.getRectangleGamificationBackground(nextLevelInfo.levelColor),
+        currentLevelInfo.levelColor, willLevelUp(userStats, transactionValue),
+        userStats.nextLevelAmount!!.minus(userStats.totalSpend), bonusMessage)
   }
 
   private fun willLevelUp(userStats: GamificationStats, transactionValue: Double): Boolean {
     return userStats.totalSpend + BigDecimal(transactionValue) >= userStats.nextLevelAmount
   }
 
-  private fun shouldShowNextLevel(levels: Levels, progress: Double,
-                                  userStats: GamificationStats): Boolean {
-    return mapper.mapLevelUpPercentage(cachedGamificationLevel) <= progress &&
+  private fun shouldShowLevelUp(levels: Levels, userStats: GamificationStats): Boolean {
+    shouldShowLevelUp =
         cachedGamificationLevel < levels.list.size - 1 && levels.status == Levels.Status.OK && userStats.status == GamificationStats.Status.OK && userStats.nextLevelAmount != null
+    return shouldShowLevelUp
   }
 
   private fun getProgressPercentage(userStats: GamificationStats,
@@ -350,18 +379,6 @@ class PaymentMethodsPresenter(
           .multiply(BigDecimal(100))
           .toDouble()
     } else 0.0
-  }
-
-
-  private fun setupBonusInformation(forecastBonus: ForecastBonusAndLevel) {
-    if (paymentMethodsInteract.isBonusActiveAndValid(forecastBonus)) {
-      view.setBonus(forecastBonus.amount, forecastBonus.currency)
-    } else {
-      view.removeBonus()
-    }
-    cachedGamificationLevel = forecastBonus.level
-    analyticsSetup.setGamificationLevel(cachedGamificationLevel)
-    amplitudeAnalytics.setGamificationLevel(cachedGamificationLevel)
   }
 
   private fun selectPaymentMethod(paymentMethods: List<PaymentMethod>, fiatValue: FiatValue,
@@ -391,6 +408,7 @@ class PaymentMethodsPresenter(
             if (preferencesRepositoryType.hasAuthenticationPermission()) {
               view.showAuthenticationActivity(paymentMethod, cachedGamificationLevel, true,
                   fiatValue)
+              hasStartedAuth = true
             } else {
               view.showAdyen(fiatValue.amount, fiatValue.currency, PaymentType.CARD,
                   paymentMethod.iconUrl, cachedGamificationLevel)
@@ -402,6 +420,7 @@ class PaymentMethodsPresenter(
       }
     } else {
       val paymentMethodId = getLastUsedPaymentMethod(paymentMethods)
+      handleBonusVisibility(paymentMethodId)
       showPaymentMethods(fiatValue, paymentMethods, paymentMethodId, fiatAmount, appcAmount)
     }
   }
@@ -655,7 +674,7 @@ class PaymentMethodsPresenter(
         view.hideLevelUp()
       }
       else -> {
-        if (closeToLevelUp) view.showLevelUp()
+        if (shouldShowLevelUp) view.showLevelUp()
         else view.showBonus()
       }
     }
@@ -708,5 +727,6 @@ class PaymentMethodsPresenter(
 
   fun onSavedInstance(outState: Bundle) {
     outState.putInt(GAMIFICATION_LEVEL, cachedGamificationLevel)
+    outState.putBoolean(SHOW_LEVEL_UP_KEY, shouldShowLevelUp)
   }
 }
