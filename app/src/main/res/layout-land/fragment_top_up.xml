@@ -178,7 +178,6 @@
           android:layout_marginTop="16dp"
           android:layout_marginEnd="@dimen/big_margin"
           android:visibility="gone"
-          app:layout_constraintBottom_toTopOf="@+id/bonus_msg"
           app:layout_constraintEnd_toStartOf="@id/mid_guideline"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/value_warning_text"

@@ -206,7 +206,7 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/big_margin"
-          android:layout_marginTop="36dp"
+          android:layout_marginTop="@dimen/big_margin"
           android:layout_marginEnd="@dimen/big_margin"
           android:visibility="invisible"
           app:layout_constraintBottom_toTopOf="@+id/bonus_msg"
@@ -240,10 +240,9 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/big_margin"
-          android:layout_marginTop="36dp"
+          android:layout_marginTop="@dimen/big_margin"
           android:layout_marginEnd="@dimen/big_margin"
-          android:visibility="gone"
-          app:layout_constraintBottom_toTopOf="@+id/bonus_msg"
+          android:visibility="invisible"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/bot_separator"
@@ -284,8 +283,9 @@
           android:enabled="false"
           android:text="@string/action_next"
           app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/bonus_msg"
+          app:layout_constraintTop_toBottomOf="@id/level_up_bonus_layout"
           app:layout_constraintVertical_bias="1.0"
+          app:layout_constraintVertical_chainStyle="packed"
           />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

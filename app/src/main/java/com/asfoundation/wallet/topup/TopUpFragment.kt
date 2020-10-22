@@ -415,7 +415,7 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
   override fun hideBonus() {
     bonus_layout.visibility = View.INVISIBLE
     bonus_msg.visibility = View.INVISIBLE
-    level_up_bonus_layout.visibility = View.GONE
+    level_up_bonus_layout.visibility = View.INVISIBLE
   }
 
   override fun hideBonusAndSkeletons() {
@@ -491,6 +491,7 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
     hideBonusSkeletons()
     bonus_msg.visibility = View.VISIBLE
     bonus_layout.visibility = View.VISIBLE
+    level_up_bonus_layout.visibility = View.INVISIBLE
   }
 
   override fun showMaxValueWarning(value: String) {
@@ -552,7 +553,7 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
   override fun showBonusSkeletons() {
     bonus_msg.visibility = View.INVISIBLE
     bonus_layout.visibility = View.INVISIBLE
-    level_up_bonus_layout.visibility = View.GONE
+    level_up_bonus_layout.visibility = View.INVISIBLE
     bonus_layout_skeleton.visibility = View.VISIBLE
     bonus_msg_skeleton.visibility = View.VISIBLE
   }
