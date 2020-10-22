@@ -201,7 +201,7 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
   }
 
   private fun handleEmptyOrDefaultInput() {
-    view.hideBonus()
+    view.hideBonusAndSkeletons()
     view.setNextButtonState(false)
   }
 
