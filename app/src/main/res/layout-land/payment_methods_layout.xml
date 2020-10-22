@@ -130,15 +130,16 @@
           layout="@layout/level_up_bonus_layout"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
-          android:layout_marginStart="@dimen/big_margin"
-          android:layout_marginTop="15dp"
-          android:layout_marginEnd="@dimen/big_margin"
+          android:layout_marginStart="@dimen/normal_margin"
+          android:layout_marginTop="@dimen/small_margin"
+          android:layout_marginEnd="@dimen/normal_margin"
           android:visibility="gone"
           app:layout_constraintEnd_toEndOf="@id/mid_guideline"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/payment_methods_header"
           app:layout_constraintVertical_bias="1"
           app:layout_constraintVertical_chainStyle="packed"
+          tools:visibility="visible"
           />
 
 

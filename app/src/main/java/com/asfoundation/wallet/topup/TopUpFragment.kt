@@ -1,8 +1,10 @@
 package com.asfoundation.wallet.topup
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import android.view.animation.RotateAnimation
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -27,6 +30,7 @@ import com.asfoundation.wallet.topup.TopUpData.Companion.APPC_C_CURRENCY
 import com.asfoundation.wallet.topup.TopUpData.Companion.DEFAULT_VALUE
 import com.asfoundation.wallet.topup.TopUpData.Companion.FIAT_CURRENCY
 import com.asfoundation.wallet.topup.paymentMethods.TopUpPaymentMethodsAdapter
+import com.asfoundation.wallet.ui.gamification.GamificationMapper
 import com.asfoundation.wallet.ui.iab.FiatValue
 import com.asfoundation.wallet.ui.iab.PaymentMethod
 import com.asfoundation.wallet.util.CurrencyFormatUtils
@@ -40,10 +44,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_top_up.*
+import kotlinx.android.synthetic.main.level_up_bonus_layout.view.*
 import kotlinx.android.synthetic.main.no_network_retry_only_layout.*
-import kotlinx.android.synthetic.main.view_purchase_bonus.view.*
+import kotlinx.android.synthetic.main.view_purchase_bonus.view.bonus_header_1
+import kotlinx.android.synthetic.main.view_purchase_bonus.view.bonus_value
 import rx.functions.Action1
 import java.math.BigDecimal
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 
@@ -63,6 +70,9 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
 
   @Inject
   lateinit var preferencesRepositoryType: PreferencesRepositoryType
+
+  @Inject
+  lateinit var gamificationMapper: GamificationMapper
 
   private lateinit var adapter: TopUpPaymentMethodsAdapter
   private lateinit var presenter: TopUpFragmentPresenter
@@ -141,9 +151,8 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
     keyboardEvents = PublishSubject.create()
     presenter =
         TopUpFragmentPresenter(this, topUpActivityView, interactor, preferencesRepositoryType,
-            AndroidSchedulers.mainThread(),
-            Schedulers.io(), topUpAnalytics, formatter,
-            savedInstanceState?.getString(SELECTED_VALUE_PARAM), logger)
+            AndroidSchedulers.mainThread(), Schedulers.io(), topUpAnalytics, formatter,
+            savedInstanceState?.getString(SELECTED_VALUE_PARAM), gamificationMapper, logger)
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -406,29 +415,80 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
   override fun hideBonus() {
     bonus_layout.visibility = View.INVISIBLE
     bonus_msg.visibility = View.INVISIBLE
+    level_up_bonus_layout.visibility = View.GONE
   }
 
   override fun hideBonusAndSkeletons() {
     hideBonus()
-    bonus_layout_skeleton.visibility = View.GONE
-    bonus_msg_skeleton.visibility = View.GONE
+    hideBonusSkeletons()
   }
 
   override fun removeBonus() {
     bonus_layout.visibility = View.GONE
     bonus_msg.visibility = View.GONE
-    bonus_layout_skeleton.visibility = View.GONE
-    bonus_msg_skeleton.visibility = View.GONE
+    level_up_bonus_layout.visibility = View.GONE
+    hideBonusSkeletons()
   }
 
-  override fun showBonus(bonus: BigDecimal, currency: String) {
-    buildBonusString(bonus, currency)
-    showBonus()
+  override fun showLegacyBonus(bonus: BigDecimal, currency: String) {
+    buildBonusString(bonus, currency, bonus_layout.bonus_header_1, bonus_layout.bonus_value)
+    showLegacyBonus()
   }
 
-  private fun showBonus() {
-    bonus_layout_skeleton.visibility = View.GONE
-    bonus_msg_skeleton.visibility = View.GONE
+  override fun setLevelUpInformation(gamificationLevel: Int, progress: Double,
+                                     currentLevelBackground: Drawable?,
+                                     nextLevelBackground: Drawable?, levelColor: Int,
+                                     willLevelUp: Boolean, leftAmount: BigDecimal,
+                                     bonus: BigDecimal, currency: String) {
+    buildBonusString(bonus, currency, level_up_bonus_layout.bonus_header_1,
+        level_up_bonus_layout.bonus_value)
+    setLevelUpInfo(gamificationLevel, progress, currentLevelBackground, nextLevelBackground,
+        levelColor, willLevelUp, leftAmount)
+    showLevelUpBonus()
+  }
+
+  private fun setLevelUpInfo(gamificationLevel: Int, progress: Double,
+                             currentLevelBackground: Drawable?,
+                             nextLevelBackground: Drawable?,
+                             levelColor: Int, willLevelUp: Boolean,
+                             leftAmount: BigDecimal) {
+    if (willLevelUp) {
+      level_up_bonus_layout.information_message.text =
+          getString(R.string.perks_level_up_on_this_purchase)
+    } else {
+      val df = DecimalFormat("###.#")
+      level_up_bonus_layout.information_message.text =
+          getString(R.string.perks_level_up_amount_left, df.format(leftAmount), "APPC")
+    }
+    currentLevelBackground?.let { level_up_bonus_layout.current_level.background = it }
+    nextLevelBackground?.let { level_up_bonus_layout.next_level.background = it }
+    level_up_bonus_layout.current_level.text =
+        getString(R.string.perks_level_up_level_tag, (gamificationLevel + 1).toString())
+    level_up_bonus_layout.next_level.text =
+        getString(R.string.perks_level_up_level_tag, (gamificationLevel + 2).toString())
+    level_up_bonus_layout.current_level_progress_bar.progress = progress.toInt()
+    level_up_bonus_layout.current_level_progress_bar.progressTintList =
+        ColorStateList.valueOf(levelColor)
+  }
+
+  private fun buildBonusString(bonus: BigDecimal, currency: String, header: TextView,
+                               value: TextView) {
+    val scaledBonus = bonus.max(BigDecimal("0.01"))
+    val bonusCurrency = "~$currency".takeIf { bonus < BigDecimal("0.01") } ?: currency
+    bonusValue = scaledBonus
+    header.text = getString(R.string.topup_bonus_header_part_1)
+    value.text = getString(R.string.topup_bonus_header_part_2,
+        bonusCurrency + formatter.formatCurrency(scaledBonus, WalletCurrency.FIAT))
+  }
+
+  private fun showLevelUpBonus() {
+    level_up_bonus_layout.visibility = View.VISIBLE
+    bonus_msg.visibility = View.GONE
+    bonus_layout.visibility = View.GONE
+  }
+
+  private fun showLegacyBonus() {
+    hideBonusSkeletons()
     bonus_msg.visibility = View.VISIBLE
     bonus_layout.visibility = View.VISIBLE
   }
@@ -492,8 +552,14 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
   override fun showBonusSkeletons() {
     bonus_msg.visibility = View.INVISIBLE
     bonus_layout.visibility = View.INVISIBLE
+    level_up_bonus_layout.visibility = View.GONE
     bonus_layout_skeleton.visibility = View.VISIBLE
     bonus_msg_skeleton.visibility = View.VISIBLE
+  }
+
+  private fun hideBonusSkeletons() {
+    bonus_layout_skeleton.visibility = View.GONE
+    bonus_msg_skeleton.visibility = View.GONE
   }
 
   override fun hidePaymentMethods() {
@@ -511,15 +577,6 @@ class TopUpFragment : DaggerFragment(), TopUpFragmentView {
   private fun hideKeyboard() {
     val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
     imm?.hideSoftInputFromWindow(fragmentContainer.windowToken, 0)
-  }
-
-  private fun buildBonusString(bonus: BigDecimal, bonusCurrency: String) {
-    val scaledBonus = bonus.max(BigDecimal("0.01"))
-    val currency = "~$bonusCurrency".takeIf { bonus < BigDecimal("0.01") } ?: bonusCurrency
-    bonusValue = scaledBonus
-    bonus_layout.bonus_header_1.text = getString(R.string.topup_bonus_header_part_1)
-    bonus_layout.bonus_value.text = getString(R.string.topup_bonus_header_part_2,
-        currency + formatter.formatCurrency(scaledBonus, WalletCurrency.FIAT))
   }
 
   private fun setupCurrencyData(selectedCurrency: String, fiatCode: String, fiatValue: String,

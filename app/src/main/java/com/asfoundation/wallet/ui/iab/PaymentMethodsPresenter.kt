@@ -287,15 +287,17 @@ class PaymentMethodsPresenter(
                     transaction.amount()), paymentMethodsInteract.getUserStatus(),
                     gamificationInteractor.getLevels(),
                     Function3 { earningBonus: ForecastBonusAndLevel, userStats: GamificationStats, levels: Levels ->
-                      UserGamificationInfo(earningBonus, userStats, levels)
+                      PaymentGamificationInfo(earningBonus, userStats, levels,
+                          BigDecimal(transactionValue))
                     })
                     .observeOn(viewScheduler)
                     .flatMapCompletable {
                       Completable.fromAction {
-                        handleBonusLayout(it)
+                        val isBonusActive =
+                            paymentMethodsInteract.isBonusActiveAndValid(it.earningBonus)
+                        handleBonusLayout(it, isBonusActive)
                         if (!hasStartedAuth) {
-                          selectPaymentMethod(paymentMethods, fiatValue,
-                              paymentMethodsInteract.isBonusActiveAndValid(it.earningBonus))
+                          selectPaymentMethod(paymentMethods, fiatValue, isBonusActive)
                         }
                       }
                     }
@@ -310,15 +312,16 @@ class PaymentMethodsPresenter(
         .subscribe({ }, { this.showError(it) }))
   }
 
-  private fun handleBonusLayout(userGamificationInfo: UserGamificationInfo) {
-    if (paymentMethodsInteract.isBonusActiveAndValid(userGamificationInfo.earningBonus)) {
+  private fun handleBonusLayout(paymentGamificationInfo: PaymentGamificationInfo,
+                                isBonusActive: Boolean) {
+    if (isBonusActive) {
       val bonusMessage =
-          buildBonusMessage(userGamificationInfo.earningBonus.amount,
-              userGamificationInfo.earningBonus.currency)
-      setGamificationInfo(userGamificationInfo.earningBonus.level)
-      if (shouldShowLevelUp(userGamificationInfo.levels, userGamificationInfo.userStats)) {
-        setupNextLevelInformation(userGamificationInfo.userStats, userGamificationInfo.levels,
-            transactionValue, bonusMessage)
+          buildBonusMessage(paymentGamificationInfo.earningBonus.amount,
+              paymentGamificationInfo.earningBonus.currency)
+      setGamificationInfo(paymentGamificationInfo.earningBonus.level)
+      if (shouldShowLevelUp(paymentGamificationInfo.levels, paymentGamificationInfo.userStats)) {
+        setupNextLevelInformation(paymentGamificationInfo.userStats, paymentGamificationInfo.levels,
+            paymentGamificationInfo.paymentAppcAmount, bonusMessage)
       } else {
         view.setupLegacyBonusInformation(bonusMessage)
       }
@@ -346,7 +349,7 @@ class PaymentMethodsPresenter(
   }
 
   private fun setupNextLevelInformation(userStats: GamificationStats, levels: Levels,
-                                        transactionValue: Double, bonusMessage: String) {
+                                        transactionValue: BigDecimal, bonusMessage: String) {
     val progress = getProgressPercentage(userStats, levels.list)
     val currentLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel)
     val nextLevelInfo = mapper.mapCurrentLevelInfo(cachedGamificationLevel + 1)
@@ -357,8 +360,8 @@ class PaymentMethodsPresenter(
         userStats.nextLevelAmount!!.minus(userStats.totalSpend), bonusMessage)
   }
 
-  private fun willLevelUp(userStats: GamificationStats, transactionValue: Double): Boolean {
-    return userStats.totalSpend + BigDecimal(transactionValue) >= userStats.nextLevelAmount
+  private fun willLevelUp(userStats: GamificationStats, transactionValue: BigDecimal): Boolean {
+    return userStats.totalSpend + transactionValue >= userStats.nextLevelAmount
   }
 
   private fun shouldShowLevelUp(levels: Levels, userStats: GamificationStats): Boolean {
@@ -420,7 +423,7 @@ class PaymentMethodsPresenter(
       }
     } else {
       val paymentMethodId = getLastUsedPaymentMethod(paymentMethods)
-      handleBonusVisibility(paymentMethodId)
+      if (isBonusActive) handleBonusVisibility(paymentMethodId)
       showPaymentMethods(fiatValue, paymentMethods, paymentMethodId, fiatAmount, appcAmount)
     }
   }
@@ -470,7 +473,8 @@ class PaymentMethodsPresenter(
                                            fiatAmount: String, appcAmount: String,
                                            isBonusActive: Boolean) {
     view.showPreSelectedPaymentMethod(paymentMethod, fiatValue,
-        mapCurrencyCodeToSymbol(fiatValue.currency), fiatAmount, appcAmount, isBonusActive)
+        mapCurrencyCodeToSymbol(fiatValue.currency), fiatAmount, appcAmount)
+    if (isBonusActive) handleBonusVisibility(paymentMethod.id)
   }
 
   private fun mapCurrencyCodeToSymbol(currencyCode: String): String {
@@ -507,7 +511,7 @@ class PaymentMethodsPresenter(
                   .toString(), selectedPaymentMethod.id, transaction.type, "other_payments")
         }
         .observeOn(viewScheduler)
-        .doOnEach { view.showSkeletonLoading() }
+        .doOnEach { view.showPaymentsSkeletonLoading() }
         .flatMapSingle {
           paymentMethodsInteract.convertToLocalFiat(transactionValue)
               .subscribeOn(networkThread)

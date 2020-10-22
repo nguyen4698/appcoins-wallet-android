@@ -243,19 +243,18 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
 
   override fun showPreSelectedPaymentMethod(paymentMethod: PaymentMethod, fiatValue: FiatValue,
                                             currency: String, fiatAmount: String,
-                                            appcAmount: String, isBonusActive: Boolean) {
+                                            appcAmount: String) {
     preSelectedPaymentMethod!!.onNext(paymentMethod)
     updateHeaderInfo(fiatValue, currency, fiatAmount, appcAmount)
 
-    setupPaymentMethod(paymentMethod, isBonusActive)
+    setupPaymentMethod(paymentMethod)
 
     presenter.sendPreSelectedPaymentMethodsEvents()
 
     setupSubject!!.onNext(true)
   }
 
-  private fun setupPaymentMethod(paymentMethod: PaymentMethod,
-                                 isBonusActive: Boolean) {
+  private fun setupPaymentMethod(paymentMethod: PaymentMethod) {
     isPreSelected = true
     mid_separator?.visibility = View.INVISIBLE
     payment_method_description.visibility = View.VISIBLE
@@ -263,10 +262,8 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
     payment_method_description_single.visibility = View.GONE
     if (paymentMethod.id == PaymentMethodId.APPC_CREDITS.id) {
       payment_method_secondary.visibility = View.VISIBLE
-      if (isBonusActive) hideBonus()
     } else {
       payment_method_secondary.visibility = View.GONE
-      if (isBonusActive) showBonus()
     }
     setupFee(paymentMethod.fee)
     loadIcons(paymentMethod, payment_method_ic)
@@ -345,12 +342,6 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
     payment_methods_list_group.visibility = View.INVISIBLE
     mid_separator?.visibility = View.VISIBLE
     payments_skeleton.visibility = View.VISIBLE
-  }
-
-  override fun showSkeletonLoading() {
-    showPaymentsSkeletonLoading()
-    bonus_layout_skeleton.visibility = View.VISIBLE
-    bonus_msg_skeleton.visibility = View.VISIBLE
   }
 
   override fun showProgressBarLoading() {

@@ -130,4 +130,8 @@ class TopUpInteractor(private val repository: BdsRepository,
   }
 
   fun getWalletAddress(): Single<String> = inAppPurchaseInteractor.walletAddress
+
+  fun getUserStatus() = gamificationInteractor.getUserStats()
+
+  fun getLevels() = gamificationInteractor.getLevels()
 }

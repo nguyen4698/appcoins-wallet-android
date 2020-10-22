@@ -235,6 +235,23 @@
           />
 
       <include
+          android:id="@+id/level_up_bonus_layout"
+          layout="@layout/level_up_bonus_layout"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/big_margin"
+          android:layout_marginTop="36dp"
+          android:layout_marginEnd="@dimen/big_margin"
+          android:visibility="gone"
+          app:layout_constraintBottom_toTopOf="@+id/bonus_msg"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/bot_separator"
+          app:layout_constraintVertical_bias="0"
+          app:layout_constraintVertical_chainStyle="packed"
+          />
+
+      <include
           android:id="@+id/bonus_layout_skeleton"
           layout="@layout/skeleton_rounded_rectangle"
           android:layout_width="0dp"

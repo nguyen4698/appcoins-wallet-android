@@ -2,11 +2,16 @@ package com.asfoundation.wallet.topup
 
 import android.os.Bundle
 import android.util.Log
+import com.appcoins.wallet.gamification.repository.ForecastBonusAndLevel
+import com.appcoins.wallet.gamification.repository.GamificationStats
+import com.appcoins.wallet.gamification.repository.Levels
 import com.asfoundation.wallet.billing.adyen.PaymentType
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.repository.PreferencesRepositoryType
 import com.asfoundation.wallet.topup.TopUpData.Companion.DEFAULT_VALUE
+import com.asfoundation.wallet.ui.gamification.GamificationMapper
 import com.asfoundation.wallet.ui.iab.FiatValue
+import com.asfoundation.wallet.ui.iab.PaymentGamificationInfo
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.isNoNetworkException
 import io.reactivex.Completable
@@ -15,7 +20,9 @@ import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 
 
@@ -28,6 +35,7 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
                              private val topUpAnalytics: TopUpAnalytics,
                              private val formatter: CurrencyFormatUtils,
                              private val selectedValue: String?,
+                             private val gamificationMapper: GamificationMapper,
                              private val logger: Logger) {
 
   private val disposables: CompositeDisposable = CompositeDisposable()
@@ -246,20 +254,66 @@ class TopUpFragmentPresenter(private val view: TopUpFragmentView,
   private fun loadBonusIntoView(appPackage: String, amount: String,
                                 currency: String): Completable {
     return interactor.convertLocal(currency, amount, 18)
-        .flatMapSingle { interactor.getEarningBonus(appPackage, it.amount) }
+        .flatMapSingle {
+          Single.zip(interactor.getEarningBonus(appPackage, it.amount),
+              interactor.getUserStatus(), interactor.getLevels(),
+              Function3 { earningBonus: ForecastBonusAndLevel, userStats: GamificationStats, levels: Levels ->
+                PaymentGamificationInfo(earningBonus, userStats, levels, it.amount)
+              })
+        }
         .subscribeOn(networkScheduler)
         .observeOn(viewScheduler)
         .doOnNext {
-          if (interactor.isBonusValidAndActive(it)) {
-            val scaledBonus = formatter.scaleFiat(it.amount)
-            view.showBonus(scaledBonus, it.currency)
+          cachedGamificationLevel = it.earningBonus.level
+          if (interactor.isBonusValidAndActive(it.earningBonus)) {
+            val scaledBonus = formatter.scaleFiat(it.earningBonus.amount)
+            if (shouldShowLevelUp(it.userStats, it.levels)) {
+              setupNextLevelInformation(it.userStats, it.levels, it.paymentAppcAmount, scaledBonus,
+                  it.earningBonus.currency)
+            } else {
+              view.showLegacyBonus(scaledBonus, it.earningBonus.currency)
+            }
           } else {
             view.removeBonus()
           }
           view.setNextButtonState(true)
-          cachedGamificationLevel = it.level
         }
         .ignoreElements()
+  }
+
+  private fun setupNextLevelInformation(userStats: GamificationStats, levels: Levels,
+                                        topUpAmount: BigDecimal, scaledBonus: BigDecimal,
+                                        currency: String) {
+    val progress = getProgressPercentage(userStats, levels.list)
+    val currentLevelInfo = gamificationMapper.mapCurrentLevelInfo(cachedGamificationLevel)
+    val nextLevelInfo = gamificationMapper.mapCurrentLevelInfo(cachedGamificationLevel + 1)
+    view.setLevelUpInformation(cachedGamificationLevel, progress,
+        gamificationMapper.getRectangleGamificationBackground(currentLevelInfo.levelColor),
+        gamificationMapper.getRectangleGamificationBackground(nextLevelInfo.levelColor),
+        currentLevelInfo.levelColor, willLevelUp(userStats, topUpAmount),
+        userStats.nextLevelAmount!!.minus(userStats.totalSpend), scaledBonus, currency)
+  }
+
+  private fun willLevelUp(userStats: GamificationStats, topUpAmount: BigDecimal): Boolean {
+    return userStats.totalSpend + topUpAmount >= userStats.nextLevelAmount
+  }
+
+  private fun shouldShowLevelUp(userStats: GamificationStats, levels: Levels): Boolean {
+    return cachedGamificationLevel < levels.list.size - 1 && levels.status == Levels.Status.OK && userStats.status == GamificationStats.Status.OK && userStats.nextLevelAmount != null
+  }
+
+  private fun getProgressPercentage(userStats: GamificationStats,
+                                    list: List<Levels.Level>): Double {
+    return if (cachedGamificationLevel <= list.size - 1) {
+      var levelRange = userStats.nextLevelAmount?.minus(list[cachedGamificationLevel].amount)
+      if (levelRange?.toDouble() == 0.0) {
+        levelRange = BigDecimal.ONE
+      }
+      val amountSpentInLevel = userStats.totalSpend - list[cachedGamificationLevel].amount
+      amountSpentInLevel.divide(levelRange, 2, RoundingMode.HALF_EVEN)
+          .multiply(BigDecimal(100))
+          .toDouble()
+    } else 0.0
   }
 
   private fun handleInsertedValue(packageName: String, topUpData: TopUpData,

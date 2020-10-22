@@ -12,8 +12,7 @@ interface PaymentMethodsView {
                          appcAmount: String, appcEnabled: Boolean, creditsEnabled: Boolean)
 
   fun showPreSelectedPaymentMethod(paymentMethod: PaymentMethod, fiatValue: FiatValue,
-                                   currency: String, fiatAmount: String,
-                                   appcAmount: String, isBonusActive: Boolean)
+                                   currency: String, fiatAmount: String, appcAmount: String)
 
   fun showError(message: Int)
 
@@ -22,8 +21,6 @@ interface PaymentMethodsView {
   fun finish(bundle: Bundle)
 
   fun showPaymentsSkeletonLoading()
-
-  fun showSkeletonLoading()
 
   fun showProgressBarLoading()
 

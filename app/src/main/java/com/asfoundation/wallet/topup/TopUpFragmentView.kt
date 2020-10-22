@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.topup
 
+import android.graphics.drawable.Drawable
 import com.asfoundation.wallet.ui.iab.FiatValue
 import com.asfoundation.wallet.ui.iab.PaymentMethod
 import io.reactivex.Observable
@@ -21,7 +22,7 @@ interface TopUpFragmentView {
   fun toggleSwitchCurrencyOff()
   fun hideBonus()
   fun hideBonusAndSkeletons()
-  fun showBonus(bonus: BigDecimal, currency: String)
+  fun showLegacyBonus(bonus: BigDecimal, currency: String)
   fun showMaxValueWarning(value: String)
   fun showMinValueWarning(value: String)
   fun hideValueInputWarning()
@@ -44,4 +45,8 @@ interface TopUpFragmentView {
   fun showSkeletons()
   fun showBonusSkeletons()
   fun hidePaymentMethods()
+  fun setLevelUpInformation(gamificationLevel: Int, progress: Double,
+                            currentLevelBackground: Drawable?, nextLevelBackground: Drawable?,
+                            levelColor: Int, willLevelUp: Boolean, leftAmount: BigDecimal,
+                            bonus: BigDecimal, currency: String)
 }

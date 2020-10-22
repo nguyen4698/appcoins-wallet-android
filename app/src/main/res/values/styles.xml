@@ -732,4 +732,11 @@
     <item name="android:textSize">14sp</item>
   </style>
 
+  <style name="GamificationInfoMessageStyle" parent="TextAppearance.AppCompat.Body1.Roboto.Regular">
+    <item name="android:ellipsize">end</item>
+    <item name="maxLines">2</item>
+    <item name="android:textColor">#001727</item>
+    <item name="android:textSize">10sp</item>
+  </style>
+
 </resources>
