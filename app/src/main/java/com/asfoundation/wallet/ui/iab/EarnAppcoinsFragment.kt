@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import com.jakewharton.rxbinding2.view.RxView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_buy_buttons_payment_methods.*
 import kotlinx.android.synthetic.main.dialog_buy_buttons_payment_methods.view.*
 import kotlinx.android.synthetic.main.earn_appcoins_layout.*
@@ -27,7 +25,6 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
 
   private lateinit var presenter: EarnAppcoinsPresenter
   private lateinit var iabView: IabView
-  private var onBackPressSubject: PublishSubject<Any>? = null
 
   @Inject
   lateinit var analytics: BillingAnalytics
@@ -38,7 +35,6 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
           PAYMENT_METHOD_NAME, type)
     }
     presenter = EarnAppcoinsPresenter(this, CompositeDisposable(), AndroidSchedulers.mainThread())
-    onBackPressSubject = PublishSubject.create()
     super.onCreate(savedInstanceState)
   }
 
@@ -51,7 +47,7 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     dialog_buy_buttons_payment_methods.buy_button.text = getString(R.string.discover_button)
     dialog_buy_buttons_payment_methods.cancel_button.text = getString(R.string.back_button)
-    setBackListener(view)
+    iabView.disableBack()
     presenter.present()
     super.onViewCreated(view, savedInstanceState)
   }
@@ -73,8 +69,8 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
     iabView.showPaymentMethodsView()
   }
 
-  override fun backPressed(): Observable<Any> {
-    return onBackPressSubject!!
+  override fun backPressed(): Observable<Boolean> {
+    return iabView.backButtonPressed()
   }
 
   override fun navigateToAptoide() {
@@ -91,40 +87,23 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
     iabView.launchIntent(intent)
   }
 
-  private fun setBackListener(view: View) {
-    iabView.disableBack()
-    view.isFocusableInTouchMode = true
-    view.requestFocus()
-    view.setOnKeyListener { _, keyCode, keyEvent ->
-      if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_BACK) {
-        onBackPressSubject?.onNext("")
-      }
-      true
-    }
-  }
-
   override fun onDestroyView() {
     iabView.enableBack()
     presenter.destroy()
-    onBackPressSubject = null
     super.onDestroyView()
   }
 
   val domain: String by lazy {
-    if (arguments!!.containsKey(
-            PARAM_DOMAIN)) {
-      arguments!!.getString(
-          PARAM_DOMAIN)
+    if (arguments!!.containsKey(PARAM_DOMAIN)) {
+      arguments!!.getString(PARAM_DOMAIN, "")
     } else {
       throw IllegalArgumentException("Domain not found")
     }
   }
 
   val skuId: String? by lazy {
-    if (arguments!!.containsKey(
-            PARAM_SKUID)) {
-      val value = arguments!!.getString(
-          PARAM_SKUID) ?: return@lazy null
+    if (arguments!!.containsKey(PARAM_SKUID)) {
+      val value = arguments!!.getString(PARAM_SKUID) ?: return@lazy null
       value
     } else {
       throw IllegalArgumentException("SkuId not found")
@@ -144,7 +123,7 @@ class EarnAppcoinsFragment : BasePageViewFragment(), EarnAppcoinsView {
 
   val type: String by lazy {
     if (arguments!!.containsKey(PARAM_TRANSACTION_TYPE)) {
-      arguments!!.getString(PARAM_TRANSACTION_TYPE)
+      arguments!!.getString(PARAM_TRANSACTION_TYPE, "")
     } else {
       throw IllegalArgumentException("type not found")
     }

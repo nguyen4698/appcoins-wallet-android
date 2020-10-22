@@ -64,6 +64,7 @@ class IabActivity : BaseActivity(), IabView, UriNavigator {
   private var transaction: TransactionBuilder? = null
   private var isBds: Boolean = false
   private var results: PublishRelay<Uri>? = null
+  private var backButtonPress: PublishRelay<Boolean>? = null
   private var developerPayload: String? = null
   private var uri: String? = null
   private var firstImpression = true
@@ -75,6 +76,7 @@ class IabActivity : BaseActivity(), IabView, UriNavigator {
     AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     results = PublishRelay.create()
+    backButtonPress = PublishRelay.create()
     authenticationResultSubject = PublishSubject.create()
     setContentView(R.layout.activity_iab)
     isBds = intent.getBooleanExtra(IS_BDS_EXTRA, false)
@@ -149,6 +151,8 @@ class IabActivity : BaseActivity(), IabView, UriNavigator {
         close(this)
       }
       super.onBackPressed()
+    } else {
+      backButtonPress?.accept(true)
     }
   }
 
@@ -419,6 +423,13 @@ class IabActivity : BaseActivity(), IabView, UriNavigator {
 
   override fun onAuthenticationResult(): Observable<PaymentAuthenticationResult> {
     return authenticationResultSubject!!
+  }
+
+  override fun backButtonPressed() = backButtonPress!!
+
+  override fun onDestroy() {
+    backButtonPress = null
+    super.onDestroy()
   }
 
   companion object {

@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,7 +132,6 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
   private lateinit var paymentMethodsAdapter: PaymentMethodsAdapter
   private val paymentMethodList: MutableList<PaymentMethod> = ArrayList()
   private var setupSubject: PublishSubject<Boolean>? = null
-  private var onBackPressedSubject: PublishSubject<Boolean>? = null
   private var preSelectedPaymentMethod: BehaviorSubject<PaymentMethod>? = null
   private var isPreSelected = false
   private var itemAlreadyOwnedError = false
@@ -151,7 +149,6 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
     setupSubject = PublishSubject.create()
     preSelectedPaymentMethod = BehaviorSubject.create()
     paymentMethodClick = PublishRelay.create()
-    onBackPressedSubject = PublishSubject.create()
     itemAlreadyOwnedError = arguments?.getBoolean(ITEM_ALREADY_OWNED, false) ?: false
     presenter = PaymentMethodsPresenter(this, appPackage, AndroidSchedulers.mainThread(),
         Schedulers.io(), CompositeDisposable(), inAppPurchaseInteractor.billingMessagesMapper,
@@ -312,17 +309,6 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
     payment_method_main_view.visibility = View.GONE
     itemAlreadyOwnedError = true
     iabView.disableBack()
-    val view = view
-    if (view != null) {
-      view.isFocusableInTouchMode = true
-      view.requestFocus()
-      view.setOnKeyListener(View.OnKeyListener { _: View?, keyCode: Int, keyEvent: KeyEvent ->
-        if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_BACK) {
-          onBackPressedSubject?.onNext(itemAlreadyOwnedError)
-        }
-        true
-      })
-    }
     error_dismiss.text = getString(R.string.ok)
     error_message.visibility = View.VISIBLE
     generic_error_layout.error_message.setText(
@@ -492,7 +478,7 @@ class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
     bonus_value.text = getString(R.string.gamification_purchase_header_part_2, bonusMessageValue)
   }
 
-  override fun onBackPressed() = onBackPressedSubject!!
+  override fun onBackPressed() = iabView.backButtonPressed()
 
   override fun showNext() = buy_button.setText(R.string.action_next)
 

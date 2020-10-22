@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.adyen.PaymentType
 import com.asfoundation.wallet.ui.PaymentNavigationData
+import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import java.math.BigDecimal
 
@@ -84,5 +85,5 @@ interface IabView {
 
   fun onAuthenticationResult(): Observable<PaymentAuthenticationResult>
 
-
+  fun backButtonPressed(): PublishRelay<Boolean>
 }

@@ -8,5 +8,5 @@ interface EarnAppcoinsView {
   fun discoverButtonClick(): Observable<Any>
   fun navigateBack()
   fun navigateToAptoide()
-  fun backPressed(): Observable<Any>
+  fun backPressed(): Observable<Boolean>
 }
