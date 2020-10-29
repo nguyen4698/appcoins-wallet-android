@@ -246,6 +246,23 @@
         android:label="@string/backup_title"
         android:theme="@style/MaterialAppTheme" />
 
+    <activity
+        android:name="com.asfoundation.wallet.support.SupportDeepLinkReceiver"
+        android:exported="true"
+        android:theme="@style/Theme.AppCompat.Transparent.NoDisplay">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data
+            android:host="${myAppcoinsHost}"
+            android:pathPrefix="/open_support"
+            android:scheme="https" />
+      </intent-filter>
+    </activity>
+
     <service
         android:name="com.asfoundation.wallet.support.SupportMessagingService"
         android:enabled="true"

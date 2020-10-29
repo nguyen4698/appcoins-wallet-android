@@ -45,6 +45,8 @@ import com.asfoundation.wallet.referrals.SharedPreferencesReferralLocalData
 import com.asfoundation.wallet.repository.*
 import com.asfoundation.wallet.service.CampaignService
 import com.asfoundation.wallet.service.LocalCurrencyConversionService
+import com.asfoundation.wallet.support.SupportDeepLinkInteractor
+import com.asfoundation.wallet.support.SupportDeepLinkNavigator
 import com.asfoundation.wallet.support.SupportInteractor
 import com.asfoundation.wallet.support.SupportSharedPreferences
 import com.asfoundation.wallet.topup.TopUpInteractor
@@ -527,4 +529,14 @@ class InteractorModule {
         gamificationRepository)
   }
 
+  @Provides
+  fun provideSupportDeepLinkInteractor(supportInteractor: SupportInteractor,
+                                       preferencesRepositoryType: PreferencesRepositoryType): SupportDeepLinkInteractor {
+    return SupportDeepLinkInteractor(supportInteractor, preferencesRepositoryType)
+  }
+
+  @Provides
+  fun provideSupportDeepLinkNavigator(context: Context): SupportDeepLinkNavigator {
+    return SupportDeepLinkNavigator(context)
+  }
 }

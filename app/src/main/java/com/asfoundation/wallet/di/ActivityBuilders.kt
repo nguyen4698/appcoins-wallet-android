@@ -2,6 +2,7 @@ package com.asfoundation.wallet.di
 
 import com.asfoundation.wallet.permissions.request.view.PermissionsActivity
 import com.asfoundation.wallet.referrals.InviteFriendsActivity
+import com.asfoundation.wallet.support.SupportDeepLinkReceiver
 import com.asfoundation.wallet.topup.TopUpActivity
 import com.asfoundation.wallet.ui.*
 import com.asfoundation.wallet.ui.backup.WalletBackupActivity
@@ -118,4 +119,8 @@ abstract class ActivityBuilders {
   @ActivityScope
   @ContributesAndroidInjector
   abstract fun bindOneStepPaymentReceiver(): OneStepPaymentReceiver
+
+  @ActivityScope
+  @ContributesAndroidInjector
+  abstract fun bindSupportDeepLinkReceiver(): SupportDeepLinkReceiver
 }

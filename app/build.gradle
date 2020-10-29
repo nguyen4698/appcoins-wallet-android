@@ -92,6 +92,7 @@ android {
       buildConfigField 'String', 'SENTRY_DSN_KEY', project.SENTRY_DSN_KEY
       manifestPlaceholders.paymentHost = "${project.MANIFEST_PAYMENT_HOST}"
       manifestPlaceholders.secondPaymentHost = "${project.MANIFEST_SECOND_PAYMENT_HOST}"
+      manifestPlaceholders.myAppcoinsHost = "${project.MANIFEST_MY_APPCOINS_HOST}"
     }
     debug {
       minifyEnabled false
@@ -114,6 +115,7 @@ android {
       buildConfigField 'String', 'SENTRY_DSN_KEY', project.SENTRY_DSN_KEY_DEV
       manifestPlaceholders.paymentHost = "${project.MANIFEST_PAYMENT_HOST_DEV}"
       manifestPlaceholders.secondPaymentHost = "${project.MANIFEST_PAYMENT_HOST_DEV}"
+      manifestPlaceholders.myAppcoinsHost = "${project.MANIFEST_MY_APPCOINS_HOST_DEV}"
       applicationVariants.all { variant -> renameArtifact(defaultConfig)
       }
     }
