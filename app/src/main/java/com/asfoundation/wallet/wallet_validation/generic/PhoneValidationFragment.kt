@@ -14,7 +14,7 @@ import com.asfoundation.wallet.logging.Logger
 import com.hbb20.CountryCodePicker
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,8 +24,8 @@ import kotlinx.android.synthetic.main.layout_validation_no_internet.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
-class PhoneValidationFragment : DaggerFragment(),
+@AndroidEntryPoint
+class PhoneValidationFragment : Fragment(),
     PhoneValidationView {
 
   @Inject

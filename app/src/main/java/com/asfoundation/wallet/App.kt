@@ -12,7 +12,6 @@ import com.appcoins.wallet.billing.BillingMessagesMapper
 import com.asf.wallet.BuildConfig
 import com.asfoundation.wallet.analytics.AmplitudeAnalytics
 import com.asfoundation.wallet.analytics.RakamAnalytics
-import com.asfoundation.wallet.di.DaggerAppComponent
 import com.asfoundation.wallet.identification.IdsRepository
 import com.asfoundation.wallet.logging.FlurryReceiver
 import com.asfoundation.wallet.logging.Logger
@@ -25,8 +24,7 @@ import com.asfoundation.wallet.ui.iab.InAppPurchaseInteractor
 import com.flurry.android.FlurryAgent
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.HiltAndroidApp
 import io.intercom.android.sdk.Intercom
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
@@ -35,9 +33,8 @@ import io.sentry.android.AndroidSentryClientFactory
 import java.util.*
 import javax.inject.Inject
 
-class App : MultiDexApplication(), HasAndroidInjector, BillingDependenciesProvider {
-  @Inject
-  lateinit var androidInjector: DispatchingAndroidInjector<Any>
+@HiltAndroidApp
+class App : MultiDexApplication(), BillingDependenciesProvider {
 
   @Inject
   lateinit var proofOfAttentionService: ProofOfAttentionService
@@ -90,10 +87,6 @@ class App : MultiDexApplication(), HasAndroidInjector, BillingDependenciesProvid
 
   override fun onCreate() {
     super.onCreate()
-    val appComponent = DaggerAppComponent.builder()
-        .application(this)
-        .build()
-    appComponent.inject(this)
     setupRxJava()
     val gpsAvailable = checkGooglePlayServices()
     if (gpsAvailable.not()) setupSupportNotificationAlarm()
@@ -133,7 +126,7 @@ class App : MultiDexApplication(), HasAndroidInjector, BillingDependenciesProvid
   }
 
   private fun initiateFlurry() {
-    if (!BuildConfig.DEBUG) {
+    if (BuildConfig.DEBUG) {
       FlurryAgent.Builder()
           .withLogEnabled(false)
           .build(this, BuildConfig.FLURRY_APK_KEY)
@@ -162,8 +155,6 @@ class App : MultiDexApplication(), HasAndroidInjector, BillingDependenciesProvid
   }
 
   fun analyticsManager() = analyticsManager
-
-  override fun androidInjector() = androidInjector
 
   override fun supportedVersion() = BuildConfig.BILLING_SUPPORTED_VERSION
 

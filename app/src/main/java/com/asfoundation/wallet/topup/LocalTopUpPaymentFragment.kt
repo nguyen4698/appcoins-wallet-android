@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.UriNavigator
@@ -16,7 +17,7 @@ import com.asfoundation.wallet.ui.iab.LocalPaymentInteractor
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -33,7 +34,8 @@ import kotlinx.android.synthetic.main.topup_pending_user_payment_view.view.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class LocalTopUpPaymentFragment : DaggerFragment(), LocalTopUpPaymentView {
+@AndroidEntryPoint
+class LocalTopUpPaymentFragment : Fragment(), LocalTopUpPaymentView {
 
   @Inject
   lateinit var localPaymentInteractor: LocalPaymentInteractor

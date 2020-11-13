@@ -16,12 +16,12 @@ import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.permissions.manage.view.ToolbarManager
 import com.asfoundation.wallet.ui.BaseActivity
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_backup.*
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class WalletBackupActivity : BaseActivity(), BackupActivityView, ToolbarManager {
 
   companion object {
@@ -53,7 +53,6 @@ class WalletBackupActivity : BaseActivity(), BackupActivityView, ToolbarManager 
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_backup)
     onPermissionSubject = PublishSubject.create()

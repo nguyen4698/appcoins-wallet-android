@@ -47,6 +47,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.ExecutorScheduler
@@ -63,6 +66,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class ServiceModule {
 
@@ -268,7 +272,7 @@ class ServiceModule {
 
   @Singleton
   @Provides
-  fun providesInstallerService(context: Context): InstallerService {
+  fun providesInstallerService(@ApplicationContext context: Context): InstallerService {
     return InstallerSourceService(context)
   }
 
@@ -300,7 +304,7 @@ class ServiceModule {
 
   @Singleton
   @Provides
-  fun provideOemIdExtractorService(context: Context, extractor: IExtract): OemIdExtractorService {
+  fun provideOemIdExtractorService(@ApplicationContext context: Context, extractor: IExtract): OemIdExtractorService {
     return OemIdExtractorService(OemIdExtractorV1(context),
         OemIdExtractorV2(context, extractor))
   }
@@ -369,7 +373,7 @@ class ServiceModule {
 
   @Singleton
   @Provides
-  fun provideAccountKeyStoreService(context: Context): AccountKeystoreService {
+  fun provideAccountKeyStoreService(@ApplicationContext context: Context): AccountKeystoreService {
     val file = File(context.filesDir, "keystore/keystore")
     return Web3jKeystoreAccountService(KeyStoreFileManager(file.absolutePath, ObjectMapper()),
         ObjectMapper())

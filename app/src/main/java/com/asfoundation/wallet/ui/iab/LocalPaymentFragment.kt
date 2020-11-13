@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
 import com.asf.wallet.R
@@ -17,6 +18,7 @@ import com.asfoundation.wallet.ui.iab.LocalPaymentView.ViewState
 import com.asfoundation.wallet.ui.iab.LocalPaymentView.ViewState.*
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -30,7 +32,8 @@ import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class LocalPaymentFragment : DaggerFragment(), LocalPaymentView {
+@AndroidEntryPoint
+class LocalPaymentFragment : Fragment(), LocalPaymentView {
 
   companion object {
 

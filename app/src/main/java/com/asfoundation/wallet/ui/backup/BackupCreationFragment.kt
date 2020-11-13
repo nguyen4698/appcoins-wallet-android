@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ShareCompat
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.backup.FileInteractor
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.interact.ExportWalletInteract
 import com.asfoundation.wallet.logging.Logger
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,7 +25,8 @@ import kotlinx.android.synthetic.main.backup_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_backup_creation_layout.*
 import javax.inject.Inject
 
-class BackupCreationFragment : BackupCreationView, DaggerFragment() {
+@AndroidEntryPoint
+class BackupCreationFragment : BackupCreationView, Fragment() {
 
   @Inject
   lateinit var exportWalletInteract: ExportWalletInteract

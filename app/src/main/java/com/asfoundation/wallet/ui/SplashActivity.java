@@ -8,13 +8,13 @@ import com.asfoundation.wallet.interact.AutoUpdateInteract;
 import com.asfoundation.wallet.repository.PreferencesRepositoryType;
 import com.asfoundation.wallet.router.OnboardingRouter;
 import com.asfoundation.wallet.router.TransactionsRouter;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import javax.inject.Inject;
 
-public class SplashActivity extends BaseActivity implements SplashView {
+@AndroidEntryPoint public class SplashActivity extends BaseActivity implements SplashView {
 
   private static final int AUTHENTICATION_REQUEST_CODE = 33;
   @Inject PreferencesRepositoryType preferencesRepositoryType;
@@ -26,7 +26,6 @@ public class SplashActivity extends BaseActivity implements SplashView {
   }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
-    AndroidInjection.inject(this);
     super.onCreate(savedInstanceState);
 
     presenter = new SplashPresenter(this, preferencesRepositoryType, AndroidSchedulers.mainThread(),

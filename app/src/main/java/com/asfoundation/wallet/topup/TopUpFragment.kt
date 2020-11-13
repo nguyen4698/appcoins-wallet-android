@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.asf.wallet.R
@@ -32,7 +33,7 @@ import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.jakewharton.rxrelay2.PublishRelay
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -45,7 +46,8 @@ import rx.functions.Action1
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class TopUpFragment : DaggerFragment(), TopUpFragmentView {
+@AndroidEntryPoint
+class TopUpFragment : Fragment(), TopUpFragmentView {
 
   @Inject
   lateinit var interactor: TopUpInteractor

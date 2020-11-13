@@ -7,7 +7,10 @@ import com.asfoundation.wallet.router.GasSettingsRouter
 import com.asfoundation.wallet.viewmodel.ConfirmationViewModelFactory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 
+@InstallIn(FragmentComponent::class)
 @Module(includes = [SendModule::class])
 class ConfirmationModule {
 

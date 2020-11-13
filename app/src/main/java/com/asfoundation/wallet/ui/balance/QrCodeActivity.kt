@@ -15,13 +15,14 @@ import com.asfoundation.wallet.ui.MyAddressActivity
 import com.asfoundation.wallet.util.generateQrCode
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.copy_share_buttons_layout.*
 import kotlinx.android.synthetic.main.qr_code_layout.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class QrCodeActivity : BaseActivity(), QrCodeView {
 
   @Inject
@@ -29,7 +30,6 @@ class QrCodeActivity : BaseActivity(), QrCodeView {
   private lateinit var presenter: QrCodePresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.qr_code_layout)
     presenter =

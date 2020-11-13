@@ -10,12 +10,14 @@ import com.asfoundation.wallet.ui.ActivityResultSharer
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.transact_success_fragment_layout.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppcoinsCreditsTransferSuccessFragment : BasePageViewFragment(),
     AppcoinsCreditsTransactSuccessView {
   companion object {

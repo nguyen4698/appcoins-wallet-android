@@ -14,7 +14,7 @@ import com.asfoundation.wallet.wallet_validation.generic.WalletValidationAnalyti
 import com.hbb20.CountryCodePicker
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -22,9 +22,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_phone_validation.*
 import javax.inject.Inject
 
-
-class PhoneValidationDialogFragment : DaggerFragment(),
-    PhoneValidationDialogView {
+@AndroidEntryPoint
+class PhoneValidationDialogFragment : Fragment(), PhoneValidationDialogView {
 
   @Inject
   lateinit var interactor: SmsValidationInteract
@@ -112,7 +111,7 @@ class PhoneValidationDialogFragment : DaggerFragment(),
       override fun getCCPDialogNoResultACK(language: CountryCodePicker.Language?,
                                            defaultNoResultACK: String?) = defaultNoResultACK ?: ""
     })
-    
+
     countryCode?.let {
       country_code_picker.setCountryForPhoneCode(it.drop(0)
           .toInt())

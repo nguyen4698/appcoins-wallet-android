@@ -71,6 +71,9 @@ import com.asfoundation.wallet.wallet_blocked.WalletBlockedInteract
 import com.asfoundation.wallet.wallet_blocked.WalletStatusRepository
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.schedulers.ExecutorScheduler
@@ -82,6 +85,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class InteractorModule {
 
@@ -233,8 +237,7 @@ class InteractorModule {
   }
 
   @Provides
-  fun provideAdyenPaymentInteractor(context: Context,
-                                    adyenPaymentRepository: AdyenPaymentRepository,
+  fun provideAdyenPaymentInteractor(adyenPaymentRepository: AdyenPaymentRepository,
                                     inAppPurchaseInteractor: InAppPurchaseInteractor,
                                     partnerAddressService: AddressService, billing: Billing,
                                     walletService: WalletService,
@@ -324,13 +327,13 @@ class InteractorModule {
                                 @Named("local_version_code")
                                 localVersionCode: Int, packageManager: PackageManager,
                                 sharedPreferences: PreferencesRepositoryType,
-                                context: Context) =
+                                @ApplicationContext context: Context) =
       AutoUpdateInteract(autoUpdateRepository, localVersionCode, Build.VERSION.SDK_INT,
           packageManager, context.packageName, sharedPreferences)
 
   @Singleton
   @Provides
-  fun provideFileInteract(context: Context, contentResolver: ContentResolver,
+  fun provideFileInteract(@ApplicationContext context: Context, contentResolver: ContentResolver,
                           preferencesRepositoryType: PreferencesRepositoryType) =
       FileInteractor(context, contentResolver, preferencesRepositoryType)
 

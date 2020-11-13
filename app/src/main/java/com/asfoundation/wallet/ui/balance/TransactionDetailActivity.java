@@ -13,7 +13,6 @@ import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import com.asf.wallet.R;
-import com.asfoundation.wallet.GlideApp;
 import com.asfoundation.wallet.entity.NetworkInfo;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.transactions.Operation;
@@ -31,7 +30,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.appbar.AppBarLayout;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.disposables.CompositeDisposable;
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -40,7 +39,7 @@ import javax.inject.Inject;
 
 import static com.asfoundation.wallet.C.Key.TRANSACTION;
 
-public class TransactionDetailActivity extends BaseActivity {
+@AndroidEntryPoint public class TransactionDetailActivity extends BaseActivity {
 
   private static final int DECIMALS = 18;
   @Inject TransactionDetailViewModelFactory transactionDetailViewModelFactory;
@@ -56,8 +55,6 @@ public class TransactionDetailActivity extends BaseActivity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    AndroidInjection.inject(this);
 
     setContentView(R.layout.activity_transaction_detail);
     findViewById(R.id.more_detail).setVisibility(View.GONE);

@@ -10,10 +10,12 @@ import com.asf.wallet.R
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.authentication_error_fragment.*
 import kotlinx.android.synthetic.main.fragment_balance.faded_background
 
+@AndroidEntryPoint
 class AuthenticationErrorFragment : BasePageViewFragment(), AuthenticationErrorView {
 
   private lateinit var presenter: AuthenticationErrorPresenter

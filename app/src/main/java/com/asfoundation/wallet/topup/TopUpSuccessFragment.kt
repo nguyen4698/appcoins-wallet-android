@@ -9,18 +9,20 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
 import com.asf.wallet.R
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.fragment_top_up_success.*
 import javax.inject.Inject
 
-class TopUpSuccessFragment : DaggerFragment(), TopUpSuccessFragmentView {
+@AndroidEntryPoint
+class TopUpSuccessFragment : Fragment(), TopUpSuccessFragmentView {
 
   companion object {
     @JvmStatic

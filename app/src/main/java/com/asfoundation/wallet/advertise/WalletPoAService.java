@@ -30,6 +30,7 @@ import com.asfoundation.wallet.repository.WrongNetworkException;
 import com.asfoundation.wallet.ui.TransactionsActivity;
 import com.asfoundation.wallet.wallet_validation.dialog.WalletValidationBroadcastReceiver;
 import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import java.util.List;
@@ -54,6 +55,7 @@ import static com.asfoundation.wallet.wallet_validation.dialog.WalletValidationB
  * Created by Joao Raimundo on 29/03/2018.
  */
 
+@AndroidEntryPoint
 public class WalletPoAService extends Service {
 
   public static final int SERVICE_ID = 77784;

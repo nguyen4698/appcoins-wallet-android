@@ -8,8 +8,11 @@ import com.asfoundation.wallet.support.SupportRepository
 import com.asfoundation.wallet.viewmodel.TransactionDetailViewModelFactory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import io.reactivex.disposables.CompositeDisposable
 
+@InstallIn(ActivityComponent::class)
 @Module
 class TransactionDetailModule {
   @Provides
@@ -21,10 +24,4 @@ class TransactionDetailModule {
     return TransactionDetailViewModelFactory(findDefaultNetworkInteract, findDefaultWalletInteract,
         externalBrowserRouter, CompositeDisposable(), supportRepository, transactionDetailRouter)
   }
-
-  @Provides
-  fun provideTransactionDetailRouter() = TransactionDetailRouter()
-
-  @Provides
-  fun externalBrowserRouter() = ExternalBrowserRouter()
 }

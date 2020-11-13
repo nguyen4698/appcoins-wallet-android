@@ -49,7 +49,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.intercom.android.sdk.Intercom;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -59,7 +59,8 @@ import javax.inject.Inject;
 import static com.asfoundation.wallet.C.ErrorCode.EMPTY_COLLECTION;
 import static com.asfoundation.wallet.support.SupportNotificationProperties.SUPPORT_NOTIFICATION_CLICK;
 
-public class TransactionsActivity extends BaseNavigationActivity implements View.OnClickListener {
+@AndroidEntryPoint public class TransactionsActivity extends BaseNavigationActivity
+    implements View.OnClickListener {
 
   private static String maxBonusEmptyScreen;
   @Inject TransactionsViewModelFactory transactionsViewModelFactory;
@@ -91,7 +92,6 @@ public class TransactionsActivity extends BaseNavigationActivity implements View
   }
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    AndroidInjection.inject(this);
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_transactions);

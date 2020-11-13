@@ -14,6 +14,7 @@ import com.asfoundation.wallet.permissions.AndroidAppDataProvider
 import com.asfoundation.wallet.permissions.PermissionsInteractor
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxrelay2.BehaviorRelay
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -23,6 +24,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_permissions_list_layout.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class PermissionsListFragment : BasePageViewFragment(), PermissionsListView {
   companion object {
     fun newInstance(): Fragment {

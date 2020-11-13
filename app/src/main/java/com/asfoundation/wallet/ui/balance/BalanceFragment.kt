@@ -26,6 +26,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -40,6 +41,7 @@ import kotlinx.android.synthetic.main.unverified_layout.*
 import javax.inject.Inject
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class BalanceFragment : BasePageViewFragment(), BalanceFragmentView {
 
   @Inject

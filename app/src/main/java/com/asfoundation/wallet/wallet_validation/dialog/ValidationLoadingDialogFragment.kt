@@ -11,12 +11,14 @@ import com.asfoundation.wallet.interact.SmsValidationInteract
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.asfoundation.wallet.wallet_validation.ValidationInfo
 import com.asfoundation.wallet.wallet_validation.generic.WalletValidationAnalytics
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_validation_loading.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ValidationLoadingDialogFragment : BasePageViewFragment(), ValidationLoadingDialogView {
 
   companion object {

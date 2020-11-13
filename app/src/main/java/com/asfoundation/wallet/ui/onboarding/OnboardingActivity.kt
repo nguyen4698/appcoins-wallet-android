@@ -22,7 +22,7 @@ import com.asfoundation.wallet.ui.BaseActivity
 import com.asfoundation.wallet.wallet_validation.WalletValidationStatus
 import com.asfoundation.wallet.wallet_validation.generic.WalletValidationActivity
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.layout_validation_no_internet.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnboardingActivity : BaseActivity(), OnboardingView {
 
   private lateinit var listener: OnboardingPageChangeListener
@@ -66,7 +67,6 @@ class OnboardingActivity : BaseActivity(), OnboardingView {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    AndroidInjection.inject(this)
     setContentView(R.layout.activity_onboarding)
     browserRouter = ExternalBrowserRouter()
     linkSubject = PublishSubject.create()

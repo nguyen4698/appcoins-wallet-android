@@ -2,7 +2,6 @@ package com.asfoundation.wallet.ui.gamification
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +16,13 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.jakewharton.rxbinding2.view.RxView
-import io.reactivex.Observable
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.bonus_updated_layout.*
 import kotlinx.android.synthetic.main.fragment_gamification.*
-import kotlinx.android.synthetic.main.fragment_gamification.bottom_sheet_fragment_container
 import kotlinx.android.synthetic.main.gamification_info_bottom_sheet.*
 import java.math.BigDecimal
 import java.text.DateFormat
@@ -32,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class GamificationFragment : BasePageViewFragment(), GamificationView {
 
   @Inject

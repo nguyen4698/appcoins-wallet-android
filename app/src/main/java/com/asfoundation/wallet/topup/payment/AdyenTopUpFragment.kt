@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.adyen.checkout.adyen3ds2.Adyen3DS2Component
 import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
@@ -42,7 +43,7 @@ import com.asfoundation.wallet.util.KeyboardUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -51,17 +52,16 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
 import kotlinx.android.synthetic.main.adyen_credit_card_pre_selected.*
 import kotlinx.android.synthetic.main.error_top_up_layout.*
+import kotlinx.android.synthetic.main.error_top_up_layout.view.*
 import kotlinx.android.synthetic.main.fragment_adyen_top_up.*
 import kotlinx.android.synthetic.main.no_network_retry_only_layout.*
 import kotlinx.android.synthetic.main.selected_payment_method_cc.*
-import kotlinx.android.synthetic.main.support_error_layout.layout_support_icn
-import kotlinx.android.synthetic.main.support_error_layout.layout_support_logo
-import kotlinx.android.synthetic.main.support_error_layout.view.*
 import kotlinx.android.synthetic.main.view_purchase_bonus.view.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
+@AndroidEntryPoint
+class AdyenTopUpFragment : Fragment(), AdyenTopUpView {
 
   @Inject
   internal lateinit var inAppPurchaseInteractor: InAppPurchaseInteractor

@@ -12,12 +12,13 @@ import com.asfoundation.wallet.ui.iab.IabActivity
 import com.asfoundation.wallet.ui.iab.IabActivity.Companion.newIntent
 import com.asfoundation.wallet.ui.iab.InAppPurchaseInteractor
 import com.asfoundation.wallet.util.TransferParser
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class OneStepPaymentReceiver : BaseActivity() {
   @Inject
   lateinit var inAppPurchaseInteractor: InAppPurchaseInteractor
@@ -37,7 +38,6 @@ class OneStepPaymentReceiver : BaseActivity() {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_iab_wallet_creation)
     walletCreationCard = findViewById(R.id.create_wallet_card)

@@ -12,6 +12,7 @@ import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.ui.iab.IabView
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_share_payment_link.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SharePaymentLinkFragment : BasePageViewFragment(),
     SharePaymentLinkFragmentView {
 

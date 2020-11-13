@@ -7,21 +7,16 @@ import com.asf.wallet.R
 import com.asfoundation.wallet.router.TransactionsRouter
 import com.asfoundation.wallet.ui.backup.WalletBackupActivity
 import com.asfoundation.wallet.ui.wallets.WalletsModel
-import dagger.android.AndroidInjection
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import javax.inject.Inject
 
-class SettingsActivity : BaseActivity(), HasAndroidInjector, SettingsActivityView {
+@AndroidEntryPoint
+class SettingsActivity : BaseActivity(), SettingsActivityView {
 
-  @Inject
-  lateinit var androidInjector: DispatchingAndroidInjector<Any>
   private var authenticationResultSubject: PublishSubject<Boolean>? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_settings)
     toolbar()
@@ -47,8 +42,6 @@ class SettingsActivity : BaseActivity(), HasAndroidInjector, SettingsActivityVie
         authenticationResultSubject?.onNext(true)
       }
   }
-
-  override fun androidInjector() = androidInjector
 
   override fun showWalletsBottomSheet(walletModel: WalletsModel) {
     supportFragmentManager.beginTransaction()

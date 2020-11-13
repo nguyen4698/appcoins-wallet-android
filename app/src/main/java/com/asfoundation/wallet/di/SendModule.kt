@@ -8,8 +8,11 @@ import com.asfoundation.wallet.util.TransferParser
 import com.asfoundation.wallet.viewmodel.SendViewModelFactory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import io.reactivex.subjects.PublishSubject
 
+@InstallIn(ActivityComponent::class)
 @Module
 class SendModule {
   @Provides
@@ -24,7 +27,4 @@ class SendModule {
 
   @Provides
   fun provideConfirmationRouter() = ConfirmationRouter(PublishSubject.create())
-
-  @Provides
-  fun provideTransactionsRouter() = TransactionsRouter()
 }

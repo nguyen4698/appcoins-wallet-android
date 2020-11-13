@@ -6,11 +6,12 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.invited_friends_animation_list.*
 import kotlinx.android.synthetic.main.referrals_layout.*
@@ -18,7 +19,8 @@ import java.math.BigDecimal
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class ReferralsFragment : DaggerFragment(), ReferralsView {
+@AndroidEntryPoint
+class ReferralsFragment : Fragment(), ReferralsView {
 
   private lateinit var presenter: ReferralsPresenter
 

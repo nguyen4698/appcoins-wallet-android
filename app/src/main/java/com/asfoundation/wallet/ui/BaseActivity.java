@@ -14,11 +14,13 @@ import com.asfoundation.wallet.App;
 import com.asfoundation.wallet.billing.analytics.PageViewAnalytics;
 import com.asfoundation.wallet.util.KeyboardUtils;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import dagger.hilt.android.AndroidEntryPoint;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BaseActivity extends AppCompatActivity implements ActivityResultSharer {
+@AndroidEntryPoint public abstract class BaseActivity extends AppCompatActivity
+    implements ActivityResultSharer {
 
   private List<ActivityResultListener> activityResultListeners;
   private PageViewAnalytics pageViewAnalytics;

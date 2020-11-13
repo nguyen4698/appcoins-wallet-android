@@ -11,7 +11,10 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.viewmodel.TransactionsViewModelFactory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
+@InstallIn(ActivityComponent::class)
 @Module
 internal class TransactionsModule {
   @Provides
@@ -47,16 +50,10 @@ internal class TransactionsModule {
   fun provideSendRouterTopUpRouter() = TopUpRouter()
 
   @Provides
-  fun provideTransactionDetailRouter() = TransactionDetailRouter()
-
-  @Provides
   fun provideMyAddressRouter() = MyAddressRouter()
 
   @Provides
   fun provideMyTokensRouter() = BalanceRouter()
-
-  @Provides
-  fun provideExternalBrowserRouter() = ExternalBrowserRouter()
 
   @Provides
   fun provideAirdropRouter() = AirdropRouter()

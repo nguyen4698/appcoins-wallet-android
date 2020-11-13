@@ -21,6 +21,7 @@ import com.asfoundation.wallet.util.generateQrCode
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.remove_backup_buttons_layout.*
 import kotlinx.android.synthetic.main.wallet_details_balance_layout.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class WalletDetailsFragment : BasePageViewFragment(), WalletDetailsView {
 
   @Inject

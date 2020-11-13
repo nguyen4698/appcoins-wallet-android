@@ -7,10 +7,13 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(FragmentComponent::class)
 @Module
 class RestoreWalletPasswordModule {
 

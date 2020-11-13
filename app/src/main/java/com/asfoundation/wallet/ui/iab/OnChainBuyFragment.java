@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import com.airbnb.lottie.FontAssetDelegate;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.TextDelegate;
@@ -19,7 +20,7 @@ import com.asfoundation.wallet.billing.analytics.BillingAnalytics;
 import com.asfoundation.wallet.entity.TransactionBuilder;
 import com.asfoundation.wallet.logging.Logger;
 import com.jakewharton.rxbinding2.view.RxView;
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -37,8 +38,7 @@ import static com.asfoundation.wallet.ui.iab.IabActivity.TRANSACTION_AMOUNT;
 /**
  * Created by franciscocalado on 19/07/2018.
  */
-
-public class OnChainBuyFragment extends DaggerFragment implements OnChainBuyView {
+@AndroidEntryPoint public class OnChainBuyFragment extends Fragment implements OnChainBuyView {
 
   private static final String APP_PACKAGE = "app_package";
   private static final String TRANSACTION_BUILDER_KEY = "transaction_builder";

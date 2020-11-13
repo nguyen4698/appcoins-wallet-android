@@ -12,10 +12,11 @@ import com.asfoundation.wallet.topup.TopUpActivity.Companion.ERROR_MESSAGE
 import com.asfoundation.wallet.ui.BaseActivity
 import com.asfoundation.wallet.ui.TransactionsActivity
 import com.asfoundation.wallet.wallet_validation.ValidationInfo
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_wallet_validation.*
 import kotlinx.android.synthetic.main.layout_referral_status.*
 
+@AndroidEntryPoint
 class WalletValidationActivity : BaseActivity(),
     WalletValidationView {
 
@@ -94,7 +95,6 @@ class WalletValidationActivity : BaseActivity(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_wallet_validation)
     presenter = WalletValidationPresenter(this)

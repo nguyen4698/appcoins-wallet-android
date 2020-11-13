@@ -13,13 +13,14 @@ import com.asfoundation.wallet.repository.SmsValidationRepositoryType
 import com.asfoundation.wallet.ui.BaseActivity
 import com.asfoundation.wallet.ui.iab.IabActivity.Companion.ERROR_MESSAGE
 import com.asfoundation.wallet.wallet_validation.ValidationInfo
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_iab_wallet_creation.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class WalletValidationDialogActivity : BaseActivity(),
     WalletValidationDialogView {
 
@@ -52,7 +53,6 @@ class WalletValidationDialogActivity : BaseActivity(),
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_poa_wallet_validation)
     savedInstanceState?.let {

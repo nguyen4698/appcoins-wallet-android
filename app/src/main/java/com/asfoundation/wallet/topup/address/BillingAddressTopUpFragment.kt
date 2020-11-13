@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.billing.address.BillingAddressModel
 import com.asfoundation.wallet.billing.address.BillingAddressTextWatcher
@@ -20,7 +21,7 @@ import com.asfoundation.wallet.topup.TopUpPaymentData
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -30,7 +31,8 @@ import kotlinx.android.synthetic.main.view_purchase_bonus.view.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class BillingAddressTopUpFragment : DaggerFragment(), BillingAddressTopUpView {
+@AndroidEntryPoint
+class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
 
   companion object {
 

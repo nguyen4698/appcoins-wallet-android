@@ -5,6 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
   buildToolsVersion '29.0.3'
@@ -27,7 +28,7 @@ android {
     //room schemas location
     javaCompileOptions {
       annotationProcessorOptions {
-        arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+        arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
       }
     }
 
@@ -179,10 +180,8 @@ dependencies {
   implementation "com.google.zxing:core:$project.zxing_version"
   implementation "com.journeyapps:zxing-android-embedded:$project.zxing_android_version"
 
-  implementation "com.google.dagger:dagger:$project.dagger_version"
-  kapt "com.google.dagger:dagger-android-processor:$project.dagger_version"
-  kapt "com.google.dagger:dagger-compiler:$project.dagger_version"
-  implementation "com.google.dagger:dagger-android-support:$project.dagger_version"
+  implementation "com.google.dagger:hilt-android:$project.hilt_version"
+  kapt "com.google.dagger:hilt-android-compiler:$project.hilt_version"
 
   implementation "io.reactivex.rxjava2:rxjava:$project.rxjava_version"
   implementation "io.reactivex.rxjava2:rxandroid:$project.rxandroid_version"
@@ -238,6 +237,15 @@ dependencies {
   testImplementation "junit:junit:$project.junit_version"
   testImplementation "org.mockito:mockito-core:$project.mockito_version"
   androidTestImplementation "androidx.test.ext:junit:$project.test_ext_version"
+
+  androidTestImplementation  "com.google.dagger:hilt-android-testing:$project.hilt_version"
+  kaptAndroidTest "com.google.dagger:hilt-android-compiler:$project.hilt_version"
+  testImplementation "com.google.dagger:hilt-android-testing:$project.hilt_version"
+  kaptTest "com.google.dagger:hilt-android-compiler:$project.hilt_version"
+}
+
+kapt {
+  correctErrorTypes true
 }
 
 def renameArtifact(defaultConfig) {

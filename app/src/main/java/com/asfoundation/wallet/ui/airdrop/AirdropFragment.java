@@ -16,20 +16,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import com.asf.wallet.R;
 import com.asfoundation.wallet.GlideApp;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jakewharton.rxbinding2.view.RxView;
-import dagger.android.support.DaggerFragment;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 import javax.inject.Inject;
 
-public class AirdropFragment extends DaggerFragment implements AirdropView {
+@AndroidEntryPoint public class AirdropFragment extends Fragment implements AirdropView {
   private static final String TAG = AirdropFragment.class.getSimpleName();
   @Inject AirdropInteractor airdropInteractor;
   private ImageView captchaView;

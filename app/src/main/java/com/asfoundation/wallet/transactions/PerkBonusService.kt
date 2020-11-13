@@ -13,12 +13,13 @@ import com.asfoundation.wallet.C
 import com.asfoundation.wallet.repository.TransactionRepositoryType
 import com.asfoundation.wallet.ui.TransactionsActivity
 import com.asfoundation.wallet.util.CurrencyFormatUtils
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 import kotlin.math.pow
 
+@AndroidEntryPoint
 class PerkBonusService : IntentService(PerkBonusService::class.java.simpleName) {
 
   @Inject
@@ -28,11 +29,6 @@ class PerkBonusService : IntentService(PerkBonusService::class.java.simpleName) 
   lateinit var formatter: CurrencyFormatUtils
 
   private lateinit var notificationManager: NotificationManager
-
-  override fun onCreate() {
-    super.onCreate()
-    AndroidInjection.inject(this)
-  }
 
   override fun onHandleIntent(intent: Intent?) {
     val address = intent?.getStringExtra(ADDRESS_KEY)

@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import com.asf.wallet.R
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.remove_wallet_first_layout.*
 import kotlinx.android.synthetic.main.wallet_outlined_card.*
 
+@AndroidEntryPoint
 class RemoveWalletFragment : BasePageViewFragment(), RemoveWalletView {
 
   private lateinit var presenter: RemoveWalletPresenter

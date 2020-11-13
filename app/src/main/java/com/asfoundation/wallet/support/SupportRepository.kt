@@ -13,7 +13,6 @@ import io.intercom.android.sdk.identity.Registration
 import io.intercom.android.sdk.push.IntercomPushClient
 import io.reactivex.Observable
 
-
 class SupportRepository(private val preferences: SupportSharedPreferences, val app: App) {
 
   companion object {

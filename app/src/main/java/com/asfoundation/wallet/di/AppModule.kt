@@ -37,7 +37,6 @@ import com.asf.appcoins.sdk.contractproxy.AppCoinsAddressProxyBuilder
 import com.asf.appcoins.sdk.contractproxy.AppCoinsAddressProxySdk
 import com.asf.wallet.BuildConfig
 import com.asf.wallet.R
-import com.asfoundation.wallet.App
 import com.asfoundation.wallet.C
 import com.asfoundation.wallet.billing.CreditsRemoteRepository
 import com.asfoundation.wallet.billing.partners.AddressService
@@ -55,7 +54,10 @@ import com.asfoundation.wallet.permissions.repository.PermissionsDatabase
 import com.asfoundation.wallet.poa.*
 import com.asfoundation.wallet.repository.*
 import com.asfoundation.wallet.repository.IpCountryCodeProvider.IpApi
+import com.asfoundation.wallet.router.ExternalBrowserRouter
 import com.asfoundation.wallet.router.GasSettingsRouter
+import com.asfoundation.wallet.router.TransactionDetailRouter
+import com.asfoundation.wallet.router.TransactionsRouter
 import com.asfoundation.wallet.service.AutoUpdateService.AutoUpdateApi
 import com.asfoundation.wallet.service.CampaignService
 import com.asfoundation.wallet.service.ServicesErrorCodeMapper
@@ -76,6 +78,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.internal.schedulers.ExecutorScheduler
@@ -92,11 +97,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
-
+@InstallIn(SingletonComponent::class)
 @Module
 internal class AppModule {
-  @Provides
-  fun provideContext(application: App): Context = application.applicationContext
 
   @Singleton
   @Provides
@@ -105,7 +108,7 @@ internal class AppModule {
   @Singleton
   @Provides
   @Named("blockchain")
-  fun provideBlockchainOkHttpClient(context: Context,
+  fun provideBlockchainOkHttpClient(@ApplicationContext context: Context,
                                     preferencesRepositoryType: PreferencesRepositoryType): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(UserAgentInterceptor(context, preferencesRepositoryType))
@@ -119,7 +122,7 @@ internal class AppModule {
   @Singleton
   @Provides
   @Named("default")
-  fun provideDefaultOkHttpClient(context: Context,
+  fun provideDefaultOkHttpClient(@ApplicationContext context: Context,
                                  preferencesRepositoryType: PreferencesRepositoryType): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(UserAgentInterceptor(context, preferencesRepositoryType))
@@ -132,7 +135,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun passwordStore(context: Context, logger: Logger): PasswordStore {
+  fun passwordStore(@ApplicationContext context: Context, logger: Logger): PasswordStore {
     return TrustPasswordStore(context, logger)
   }
 
@@ -254,7 +257,7 @@ internal class AppModule {
 
   @Provides
   @Singleton
-  fun provideInAppPurchaseDataSaver(context: Context, operationSources: OperationSources,
+  fun provideInAppPurchaseDataSaver(@ApplicationContext context: Context, operationSources: OperationSources,
                                     appCoinsOperationRepository: AppCoinsOperationRepository): AppcoinsOperationsDataSaver {
     return AppcoinsOperationsDataSaver(operationSources.sources, appCoinsOperationRepository,
         AppInfoProvider(context, ImageSaver(context.filesDir
@@ -315,7 +318,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun provideSharedPreferences(context: Context): SharedPreferences {
+  fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
     return PreferenceManager.getDefaultSharedPreferences(context)
   }
 
@@ -340,7 +343,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesPermissions(context: Context): Permissions {
+  fun providesPermissions(@ApplicationContext context: Context): Permissions {
     return Permissions(PermissionRepository(Room.databaseBuilder(context.applicationContext,
         PermissionsDatabase::class.java,
         "permissions_database")
@@ -350,7 +353,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesPromotionDatabase(context: Context): PromotionDatabase {
+  fun providesPromotionDatabase(@ApplicationContext context: Context): PromotionDatabase {
     return Room.databaseBuilder(context, PromotionDatabase::class.java, "promotion_database")
         .addMigrations(MIGRATION_1_2)
         .build()
@@ -393,7 +396,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun provideNotificationManager(context: Context): NotificationManager {
+  fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
     return context.applicationContext.getSystemService(
         Context.NOTIFICATION_SERVICE) as NotificationManager
   }
@@ -401,7 +404,7 @@ internal class AppModule {
   @Singleton
   @Provides
   @Named("heads_up")
-  fun provideHeadsUpNotificationBuilder(context: Context,
+  fun provideHeadsUpNotificationBuilder(@ApplicationContext context: Context,
                                         notificationManager: NotificationManager): NotificationCompat.Builder {
     val builder: NotificationCompat.Builder
     val channelId = "notification_channel_heads_up_id"
@@ -430,7 +433,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providePackageManager(context: Context): PackageManager = context.packageManager
+  fun providePackageManager(@ApplicationContext context: Context): PackageManager = context.packageManager
 
   @Singleton
   @Provides
@@ -447,7 +450,7 @@ internal class AppModule {
 
   @Provides
   @Named("local_version_code")
-  fun provideLocalVersionCode(context: Context, packageManager: PackageManager): Int {
+  fun provideLocalVersionCode(@ApplicationContext context: Context, packageManager: PackageManager): Int {
     return try {
       packageManager.getPackageInfo(context.packageName, 0)
           .versionCode
@@ -466,7 +469,7 @@ internal class AppModule {
   fun provideCurrencyFormatUtils() = create()
 
   @Provides
-  fun provideContentResolver(context: Context): ContentResolver = context.contentResolver
+  fun provideContentResolver(@ApplicationContext context: Context): ContentResolver = context.contentResolver
 
   @Singleton
   @Provides
@@ -495,7 +498,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesGamificationMapper(context: Context) = GamificationMapper(context)
+  fun providesGamificationMapper(@ApplicationContext context: Context) = GamificationMapper(context)
 
   @Singleton
   @Provides
@@ -503,11 +506,11 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesBiometricManager(context: Context) = BiometricManager.from(context)
+  fun providesBiometricManager(@ApplicationContext context: Context) = BiometricManager.from(context)
 
   @Singleton
   @Provides
-  fun provideTransactionsDatabase(context: Context): TransactionsDatabase {
+  fun provideTransactionsDatabase(@ApplicationContext context: Context): TransactionsDatabase {
     return Room.databaseBuilder(context.applicationContext,
         TransactionsDatabase::class.java,
         "transactions_database")
@@ -531,4 +534,12 @@ internal class AppModule {
       transactionsDatabase: TransactionsDatabase): TransactionLinkIdDao =
       transactionsDatabase.transactionLinkIdDao()
 
+  @Provides
+  fun provideTransactionsRouter() = TransactionsRouter()
+
+  @Provides
+  fun provideTransactionDetailRouter() = TransactionDetailRouter()
+
+  @Provides
+  fun provideExternalBrowserRouter() = ExternalBrowserRouter()
 }

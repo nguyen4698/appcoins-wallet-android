@@ -12,6 +12,7 @@ import com.asfoundation.wallet.util.scaleToString
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.invite_friends_fragment_layout.*
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.referral_notification_card.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class InviteFriendsFragment : BasePageViewFragment(), InviteFriendsFragmentView {
 
   @Inject

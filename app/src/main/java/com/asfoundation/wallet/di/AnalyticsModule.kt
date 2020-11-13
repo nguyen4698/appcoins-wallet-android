@@ -17,12 +17,16 @@ import com.asfoundation.wallet.wallet_validation.generic.WalletValidationAnalyti
 import com.facebook.appevents.AppEventsLogger
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class AnalyticsModule {
 
@@ -122,7 +126,8 @@ class AnalyticsModule {
   @Singleton
   @Provides
   fun provideAnalyticsManager(@Named("default") okHttpClient: OkHttpClient, api: AnalyticsAPI,
-                              context: Context, @Named("bi_event_list") biEventList: List<String>,
+                              @ApplicationContext context: Context,
+                              @Named("bi_event_list") biEventList: List<String>,
                               @Named("facebook_event_list") facebookEventList: List<String>,
                               @Named("rakam_event_list") rakamEventList: List<String>,
                               @Named("amplitude_event_list")
@@ -165,14 +170,14 @@ class AnalyticsModule {
 
   @Singleton
   @Provides
-  fun provideRakamAnalyticsSetup(context: Context, idsRepository: IdsRepository,
+  fun provideRakamAnalyticsSetup(@ApplicationContext context: Context, idsRepository: IdsRepository,
                                  logger: Logger): RakamAnalytics {
     return RakamAnalytics(context, idsRepository, logger)
   }
 
   @Singleton
   @Provides
-  fun provideAmplitudeAnalytics(context: Context,
+  fun provideAmplitudeAnalytics(@ApplicationContext context: Context,
                                 idsRepository: IdsRepository): AmplitudeAnalytics {
     return AmplitudeAnalytics(context, idsRepository)
   }

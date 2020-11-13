@@ -19,6 +19,7 @@ import com.asfoundation.wallet.wallet_validation.PasteTextWatcher
 import com.asfoundation.wallet.wallet_validation.ValidationInfo
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,9 +32,8 @@ import kotlinx.android.synthetic.main.single_sms_input_layout.view.*
 import kotlinx.android.synthetic.main.sms_text_input_layout.*
 import javax.inject.Inject
 
-
-class CodeValidationFragment : BasePageViewFragment(),
-    CodeValidationView {
+@AndroidEntryPoint
+class CodeValidationFragment : BasePageViewFragment(), CodeValidationView {
 
   @Inject
   lateinit var referralInteractor: ReferralInteractorContract

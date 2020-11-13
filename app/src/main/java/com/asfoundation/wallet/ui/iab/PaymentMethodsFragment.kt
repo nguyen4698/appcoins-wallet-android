@@ -21,7 +21,7 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxrelay2.PublishRelay
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,7 +43,8 @@ import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 
-class PaymentMethodsFragment : DaggerFragment(), PaymentMethodsView {
+@AndroidEntryPoint
+class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
 
   companion object {
     private const val IS_BDS = "isBds"

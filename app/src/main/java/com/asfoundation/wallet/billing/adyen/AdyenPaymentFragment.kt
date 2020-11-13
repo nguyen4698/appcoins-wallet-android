@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.adyen.checkout.adyen3ds2.Adyen3DS2Component
 import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
@@ -46,7 +47,7 @@ import com.asfoundation.wallet.util.KeyboardUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -69,7 +70,8 @@ import org.apache.commons.lang3.StringUtils
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
+@AndroidEntryPoint
+class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
 
   @Inject
   lateinit var inAppPurchaseInteractor: InAppPurchaseInteractor

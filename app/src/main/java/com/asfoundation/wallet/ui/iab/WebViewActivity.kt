@@ -12,8 +12,9 @@ import android.util.Log
 import android.view.Surface
 import androidx.appcompat.app.AppCompatActivity
 import com.asf.wallet.R
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WebViewActivity : AppCompatActivity() {
 
   override fun getAssets(): AssetManager {
@@ -28,7 +29,6 @@ class WebViewActivity : AppCompatActivity() {
   private lateinit var billingWebViewFragment: BillingWebViewFragment
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidInjection.inject(this)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.web_view_activity)
     lockCurrentPosition()

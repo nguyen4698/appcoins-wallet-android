@@ -51,6 +51,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -64,6 +67,7 @@ import java.util.*
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class RepositoryModule {
 
@@ -88,7 +92,7 @@ class RepositoryModule {
 
   @Singleton
   @Provides
-  fun providesAppCoinsOperationRepository(context: Context): AppCoinsOperationRepository {
+  fun providesAppCoinsOperationRepository(@ApplicationContext context: Context): AppCoinsOperationRepository {
     return AppCoinsOperationRepository(
         Room.databaseBuilder(context.applicationContext, AppCoinsOperationDatabase::class.java,
             "appcoins_operations_data")
@@ -171,7 +175,7 @@ class RepositoryModule {
 
   @Singleton
   @Provides
-  fun provideBalanceRepository(context: Context,
+  fun provideBalanceRepository(@ApplicationContext context: Context,
                                localCurrencyConversionService: LocalCurrencyConversionService,
                                getDefaultWalletBalanceInteract: GetDefaultWalletBalanceInteract): BalanceRepository {
     return AppcoinsBalanceRepository(getDefaultWalletBalanceInteract,
@@ -189,7 +193,7 @@ class RepositoryModule {
 
   @Singleton
   @Provides
-  fun provideIdsRepository(context: Context,
+  fun provideIdsRepository(@ApplicationContext context: Context,
                            sharedPreferencesRepository: SharedPreferencesRepository,
                            installerService: InstallerService): IdsRepository {
     return IdsRepository(context.contentResolver, sharedPreferencesRepository, installerService)

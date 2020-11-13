@@ -1,11 +1,11 @@
 package com.asfoundation.wallet.viewmodel
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.App
 import com.asfoundation.wallet.billing.analytics.PageViewAnalytics
-import dagger.android.support.DaggerFragment
 
-abstract class BasePageViewFragment : DaggerFragment() {
+abstract class BasePageViewFragment : Fragment() {
 
   private lateinit var pageViewAnalytics: PageViewAnalytics
 

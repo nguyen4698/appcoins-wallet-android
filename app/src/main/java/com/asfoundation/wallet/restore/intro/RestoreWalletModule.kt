@@ -6,17 +6,20 @@ import com.asfoundation.wallet.navigator.ActivityNavigatorContract
 import com.asfoundation.wallet.restore.RestoreWalletActivity
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(FragmentComponent::class)
 @Module
 class RestoreWalletModule {
 
   @Provides
   fun providesRestoreWalletNavigator(fragment: RestoreWalletFragment,
                                      activityNavigator: ActivityNavigatorContract): RestoreWalletNavigator {
-    return RestoreWalletNavigator(fragment.requireFragmentManager(), activityNavigator)
+    return RestoreWalletNavigator(fragment.parentFragmentManager, activityNavigator)
   }
 
   @Provides

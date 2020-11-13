@@ -10,11 +10,13 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.invite_friends_verification_layout.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class InviteFriendsVerificationFragment : BasePageViewFragment(), InviteFriendsVerificationView {
 
   @Inject

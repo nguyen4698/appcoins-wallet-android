@@ -26,7 +26,7 @@ import com.asfoundation.wallet.util.WalletCurrency;
 import com.asfoundation.wallet.viewmodel.ConfirmationViewModel;
 import com.asfoundation.wallet.viewmodel.ConfirmationViewModelFactory;
 import com.asfoundation.wallet.viewmodel.GasSettingsViewModel;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import java.math.BigDecimal;
 import javax.inject.Inject;
 
@@ -34,7 +34,7 @@ import static com.asfoundation.wallet.C.EXTRA_GAS_SETTINGS;
 import static com.asfoundation.wallet.C.EXTRA_TRANSACTION_BUILDER;
 import static com.asfoundation.wallet.C.GWEI_UNIT;
 
-public class ConfirmationActivity extends BaseActivity {
+@AndroidEntryPoint public class ConfirmationActivity extends BaseActivity {
   private static final String TAG = ConfirmationActivity.class.getSimpleName();
 
   AlertDialog dialog;
@@ -49,8 +49,6 @@ public class ConfirmationActivity extends BaseActivity {
   private TextView networkFeeText;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    AndroidInjection.inject(this);
-
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_confirm);

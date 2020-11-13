@@ -17,6 +17,7 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.TransferParser
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.support_error_layout.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class AppcoinsRewardsBuyFragment : BasePageViewFragment(), AppcoinsRewardsBuyView {
 
   @Inject

@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.ui.balance.BalanceInteractor
 import com.asfoundation.wallet.ui.iab.FiatValue
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -20,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_backup_wallet_layout.*
 import kotlinx.android.synthetic.main.item_wallet_addr.*
 import javax.inject.Inject
 
-class BackupWalletFragment : DaggerFragment(), BackupWalletFragmentView {
+@AndroidEntryPoint
+class BackupWalletFragment : Fragment(), BackupWalletFragmentView {
 
   @Inject
   lateinit var balanceInteractor: BalanceInteractor

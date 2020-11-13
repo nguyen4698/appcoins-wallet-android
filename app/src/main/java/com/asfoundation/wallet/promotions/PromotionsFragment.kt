@@ -15,6 +15,7 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.jakewharton.rxbinding2.view.RxView
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.gamification_info_bottom_sheet.*
 import kotlinx.android.synthetic.main.no_network_retry_only_layout.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class PromotionsFragment : BasePageViewFragment(), PromotionsView {
 
   @Inject

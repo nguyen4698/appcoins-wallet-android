@@ -11,6 +11,7 @@ import com.asf.wallet.R
 import com.asfoundation.wallet.advertise.WalletPoAService.VERIFICATION_SERVICE_ID
 import com.asfoundation.wallet.poa.ProofOfAttentionService
 import com.asfoundation.wallet.viewmodel.BasePageViewFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -18,6 +19,7 @@ import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.fragment_validation_success.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ValidationSuccessDialogFragment : BasePageViewFragment(), ValidationSuccessDialogView {
 
   @Inject

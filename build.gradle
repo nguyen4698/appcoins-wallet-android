@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = "1.3.21"
+  ext.kotlin_version = "1.3.72"
 
   repositories {
     google()
@@ -15,6 +15,7 @@ buildscript {
     classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
     classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     classpath "com.google.gms:google-services:4.3.3"
+    classpath "com.google.dagger:hilt-android-gradle-plugin:2.29.1-alpha"
   }
 }
 
@@ -57,6 +58,7 @@ project.ext {
   gradle_version = '3.3.2'
   gradle_bintray_version = '1.7.3'
   gson_version = '2.8.6'
+  hilt_version = '2.29.1-alpha'
   intercom_version = '7.1.0'
   jackson_version = "2.10.3"
   jetbrains_annotations_version = "19.0.0"

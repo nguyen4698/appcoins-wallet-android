@@ -26,7 +26,7 @@ import com.asfoundation.wallet.navigator.UriNavigator
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -48,7 +48,8 @@ import kotlinx.android.synthetic.main.view_purchase_bonus.view.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class MergedAppcoinsFragment : DaggerFragment(), MergedAppcoinsView {
+@AndroidEntryPoint
+class MergedAppcoinsFragment : Fragment(), MergedAppcoinsView {
 
   companion object {
     private const val FIAT_AMOUNT_KEY = "fiat_amount"

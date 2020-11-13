@@ -18,6 +18,7 @@ import com.asfoundation.wallet.permissions.manage.view.ManagePermissionsActivity
 import com.asfoundation.wallet.restore.RestoreWalletActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.preference_fingerprint.*
 import kotlinx.android.synthetic.main.preference_fingerprint_off.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat(), SettingsView {
 
   @Inject
