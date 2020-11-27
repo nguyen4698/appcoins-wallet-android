@@ -7,19 +7,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
 import com.asf.wallet.R
 import com.asfoundation.wallet.ui.iab.IabView
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_carrier_payment_status.*
 import kotlinx.android.synthetic.main.fragment_iab_transaction_completed.view.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class CarrierPaymentFragment : DaggerFragment(), CarrierPaymentView {
+@AndroidEntryPoint
+class CarrierPaymentFragment : Fragment(), CarrierPaymentView {
 
   @Inject
   lateinit var formatter: CurrencyFormatUtils

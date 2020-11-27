@@ -1,10 +1,15 @@
 package com.asfoundation.wallet.ui.backup
 
+import android.content.Context
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.ui.backup.BackupActivity.Companion.WALLET_ADDRESS
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 
+@InstallIn(ActivityComponent::class)
 @Module
 class BackupActivityModule {
 
@@ -27,5 +32,10 @@ class BackupActivityModule {
   @Provides
   fun providesBackupActivityNavigator(activity: BackupActivity): BackupActivityNavigator {
     return BackupActivityNavigator(activity.supportFragmentManager, activity)
+  }
+
+  @Provides
+  fun providesBackupActivity(@ActivityContext context: Context): BackupActivity {
+    return context as BackupActivity
   }
 }

@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.dialog_buy_buttons.*
 import kotlinx.android.synthetic.main.fragment_iab_error.*
 import javax.inject.Inject
 
-class IabErrorFragment : DaggerFragment(), IabErrorView {
+@AndroidEntryPoint
+class IabErrorFragment : Fragment(), IabErrorView {
 
   @Inject
   lateinit var presenter: IabErrorPresenter

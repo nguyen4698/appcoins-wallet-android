@@ -1,14 +1,18 @@
 package com.asfoundation.wallet.ui.iab.localpayments
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.UriNavigator
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.math.BigDecimal
 
+@InstallIn(FragmentComponent::class)
 @Module
 class LocalPaymentModule {
 
@@ -46,12 +50,13 @@ class LocalPaymentModule {
   }
 
   @Provides
-  fun providesLocalPaymentNavigator(uriNavigator: UriNavigator): LocalPaymentNavigator {
-    return LocalPaymentNavigator(uriNavigator)
+  fun providesLocalPaymentNavigator(fragment: LocalPaymentFragment): LocalPaymentNavigator {
+    //This should have it's own provider in the IabActivity, but it's not in the scope of this branch
+    return LocalPaymentNavigator(fragment.activity as UriNavigator)
   }
 
   @Provides
-  fun providesUriNavigator(fragment: LocalPaymentFragment): UriNavigator {
-    return fragment.activity as UriNavigator
+  fun providesLocalPaymentFragment(fragment: Fragment): LocalPaymentFragment {
+    return fragment as LocalPaymentFragment
   }
 }

@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.topup.localpayments
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.UriNavigator
 import com.asfoundation.wallet.topup.TopUpActivityView
@@ -16,10 +17,13 @@ import com.asfoundation.wallet.ui.iab.localpayments.LocalPaymentInteractor
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(FragmentComponent::class)
 @Module
 class LocalTopUpPaymentModule {
 
@@ -49,5 +53,10 @@ class LocalTopUpPaymentModule {
   fun providesTopUpPaymentNavigator(fragment: LocalTopUpPaymentFragment): TopUpNavigator {
     return TopUpNavigator(fragment.requireFragmentManager(), fragment.activity as UriNavigator,
         fragment.activity as TopUpActivityView)
+  }
+
+  @Provides
+  fun providesLocalTopupFragment(fragment: Fragment): LocalTopUpPaymentFragment {
+    return fragment as LocalTopUpPaymentFragment
   }
 }

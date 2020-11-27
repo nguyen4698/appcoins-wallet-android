@@ -258,7 +258,8 @@ internal class AppModule {
 
   @Provides
   @Singleton
-  fun provideInAppPurchaseDataSaver(@ApplicationContext context: Context, operationSources: OperationSources,
+  fun provideInAppPurchaseDataSaver(@ApplicationContext context: Context,
+                                    operationSources: OperationSources,
                                     appCoinsOperationRepository: AppCoinsOperationRepository): AppcoinsOperationsDataSaver {
     return AppcoinsOperationsDataSaver(operationSources.sources, appCoinsOperationRepository,
         AppInfoProvider(context, ImageSaver(context.filesDir
@@ -434,7 +435,8 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providePackageManager(@ApplicationContext context: Context): PackageManager = context.packageManager
+  fun providePackageManager(@ApplicationContext context: Context): PackageManager =
+      context.packageManager
 
   @Singleton
   @Provides
@@ -451,7 +453,8 @@ internal class AppModule {
 
   @Provides
   @Named("local_version_code")
-  fun provideLocalVersionCode(@ApplicationContext context: Context, packageManager: PackageManager): Int {
+  fun provideLocalVersionCode(@ApplicationContext context: Context,
+                              packageManager: PackageManager): Int {
     return try {
       packageManager.getPackageInfo(context.packageName, 0)
           .versionCode
@@ -470,7 +473,8 @@ internal class AppModule {
   fun provideCurrencyFormatUtils() = create()
 
   @Provides
-  fun provideContentResolver(@ApplicationContext context: Context): ContentResolver = context.contentResolver
+  fun provideContentResolver(@ApplicationContext context: Context): ContentResolver =
+      context.contentResolver
 
   @Singleton
   @Provides
@@ -507,7 +511,8 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesBiometricManager(@ApplicationContext context: Context) = BiometricManager.from(context)
+  fun providesBiometricManager(@ApplicationContext context: Context) =
+      BiometricManager.from(context)
 
   @Singleton
   @Provides
@@ -538,11 +543,14 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesApplicationInfoLoader(context: Context) = ApplicationInfoProvider(context)
+  fun providesApplicationInfoLoader(@ApplicationContext context: Context) =
+      ApplicationInfoProvider(context)
 
   @Singleton
   @Provides
-  fun providesStringProvider(context: Context): StringProvider = StringProvider(context.resources)
+  fun providesStringProvider(@ApplicationContext context: Context): StringProvider =
+      StringProvider(context.resources)
+
   @Provides
   fun provideTransactionsRouter() = TransactionsRouter()
 

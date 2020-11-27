@@ -9,10 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.util.withNoLayoutTransition
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_buy_buttons_payment_methods.*
@@ -21,7 +22,8 @@ import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 
-class CarrierVerifyFragment : DaggerFragment(), CarrierVerifyView {
+@AndroidEntryPoint
+class CarrierVerifyFragment : Fragment(), CarrierVerifyView {
 
   @Inject
   lateinit var presenter: CarrierVerifyPresenter

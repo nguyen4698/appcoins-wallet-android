@@ -1,17 +1,21 @@
 package com.asfoundation.wallet.ui.iab.payments.common.error
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.support.SupportInteractor
 import com.asfoundation.wallet.ui.iab.IabActivity
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.disposables.CompositeDisposable
 
+@InstallIn(FragmentComponent::class)
 @Module
 class IabErrorModule {
 
   @Provides
   fun providesIabErrorNavigator(fragment: IabErrorFragment): IabErrorNavigator {
-    return IabErrorNavigator(fragment.activity as IabActivity, fragment.requireFragmentManager())
+    return IabErrorNavigator(fragment.activity as IabActivity, fragment.parentFragmentManager)
   }
 
   @Provides
@@ -33,5 +37,10 @@ class IabErrorModule {
                                 supportInteractor: SupportInteractor): IabErrorPresenter {
     return IabErrorPresenter(fragment as IabErrorView, data, navigator, supportInteractor,
         CompositeDisposable())
+  }
+
+  @Provides
+  fun providesIabErrorFragment(fragment: Fragment):IabErrorFragment {
+    return fragment as IabErrorFragment
   }
 }

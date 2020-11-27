@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.ui.onboarding
 
+import android.content.Context
 import com.appcoins.wallet.bdsbilling.WalletService
 import com.appcoins.wallet.bdsbilling.repository.BdsRepository
 import com.appcoins.wallet.gamification.Gamification
@@ -9,11 +10,15 @@ import com.asfoundation.wallet.router.TransactionsRouter
 import com.asfoundation.wallet.support.SupportInteractor
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
 
+@InstallIn(ActivityComponent::class)
 @Module
 class OnboardingModule {
 
@@ -41,5 +46,7 @@ class OnboardingModule {
   }
 
   @Provides
-  fun providesTransactionsRouter() = TransactionsRouter()
+  fun providesOnboardingActivity(@ActivityContext context: Context): OnboardingActivity {
+    return context as OnboardingActivity
+  }
 }

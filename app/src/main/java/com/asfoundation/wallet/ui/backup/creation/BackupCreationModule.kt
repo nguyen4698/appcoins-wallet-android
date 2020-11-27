@@ -3,6 +3,7 @@ package com.asfoundation.wallet.ui.backup.creation
 import android.content.Context
 import android.os.Build
 import android.os.Environment
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.backup.FileInteractor
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.interact.ExportWalletInteractor
@@ -12,12 +13,16 @@ import com.asfoundation.wallet.ui.backup.creation.BackupCreationFragment.Compani
 import com.asfoundation.wallet.ui.backup.creation.BackupCreationFragment.Companion.WALLET_ADDRESS_KEY
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Named
 
+@InstallIn(FragmentComponent::class)
 @Module
 class BackupCreationModule {
 
@@ -51,7 +56,7 @@ class BackupCreationModule {
 
   @Provides
   @Named("temporary-path")
-  fun providesTemporaryPath(context: Context): File? = context.externalCacheDir
+  fun providesTemporaryPath(@ActivityContext context: Context): File? = context.externalCacheDir
 
   @Provides
   @Named("downloads-path")
@@ -64,11 +69,11 @@ class BackupCreationModule {
   @Provides
   fun providesBackupCreationNavigator(fragment: BackupCreationFragment,
                                       activityNavigator: BackupActivityNavigator): BackupCreationNavigator {
-    return BackupCreationNavigator(fragment.requireFragmentManager(), activityNavigator)
+    return BackupCreationNavigator(fragment.parentFragmentManager, activityNavigator)
   }
 
   @Provides
-  fun providesBackupActivityNavigator(fragment: BackupCreationFragment): BackupActivityNavigator {
-    return BackupActivityNavigator(fragment.requireFragmentManager(), fragment.activity!!)
+  fun providesBackupCreationFragment(fragment: Fragment): BackupCreationFragment {
+    return fragment as BackupCreationFragment
   }
 }

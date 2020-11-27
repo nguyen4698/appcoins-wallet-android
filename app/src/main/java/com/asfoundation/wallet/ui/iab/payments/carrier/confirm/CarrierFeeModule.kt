@@ -1,14 +1,18 @@
 package com.asfoundation.wallet.ui.iab.payments.carrier.confirm
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.ui.iab.IabActivity
 import com.asfoundation.wallet.util.applicationinfo.ApplicationInfoProvider
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.math.BigDecimal
 
+@InstallIn(FragmentComponent::class)
 @Module
 class CarrierFeeModule {
 
@@ -45,5 +49,10 @@ class CarrierFeeModule {
                                   appInfoProvider: ApplicationInfoProvider): CarrierFeePresenter {
     return CarrierFeePresenter(CompositeDisposable(), fragment as CarrierFeeView, data,
         navigator, billingAnalytics, appInfoProvider, AndroidSchedulers.mainThread())
+  }
+
+  @Provides
+  fun providesCarrierFeeFragment(fragment: Fragment): CarrierFeeFragment {
+    return fragment as CarrierFeeFragment
   }
 }

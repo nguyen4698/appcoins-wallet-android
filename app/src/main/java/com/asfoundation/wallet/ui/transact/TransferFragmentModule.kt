@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.ui.transact
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.interact.DefaultTokenProvider
 import com.asfoundation.wallet.interact.FindDefaultWalletInteract
 import com.asfoundation.wallet.interact.GetDefaultWalletBalanceInteract
@@ -8,10 +9,13 @@ import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.wallet_blocked.WalletBlockedInteract
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(FragmentComponent::class)
 @Module
 class TransferFragmentModule {
 
@@ -44,5 +48,10 @@ class TransferFragmentModule {
                                         defaultTokenProvider: DefaultTokenProvider): TransferFragmentNavigator {
     return TransferFragmentNavigator(transferFragment.requireFragmentManager(), transferFragment,
         transferFragment.activity!!, defaultTokenProvider)
+  }
+
+  @Provides
+  fun providesTransferFragment(fragment: Fragment): TransferFragment {
+    return fragment as TransferFragment
   }
 }

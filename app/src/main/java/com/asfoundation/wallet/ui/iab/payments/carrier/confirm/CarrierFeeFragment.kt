@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.GlideApp
 import com.asfoundation.wallet.ui.iab.IabView
@@ -19,7 +20,7 @@ import com.asfoundation.wallet.util.WalletCurrency
 import com.asfoundation.wallet.util.getStringSpanned
 import com.asfoundation.wallet.util.withNoLayoutTransition
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.dialog_buy_buttons_payment_methods.*
 import kotlinx.android.synthetic.main.fragment_carrier_confirm.*
@@ -27,7 +28,8 @@ import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 
-class CarrierFeeFragment : DaggerFragment(), CarrierFeeView {
+@AndroidEntryPoint
+class CarrierFeeFragment : Fragment(), CarrierFeeView {
 
   private val formatter = CurrencyFormatUtils()
 

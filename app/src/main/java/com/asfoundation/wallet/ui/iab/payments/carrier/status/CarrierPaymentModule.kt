@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.ui.iab.payments.carrier.status
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.UriNavigator
@@ -7,18 +8,21 @@ import com.asfoundation.wallet.ui.iab.IabActivity
 import com.asfoundation.wallet.ui.iab.payments.carrier.CarrierInteractor
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.math.BigDecimal
 
+@InstallIn(FragmentComponent::class)
 @Module
 class CarrierPaymentModule {
   @Provides
-  fun providesCarrierPaymentNavigator(fragment: CarrierPaymentFragment,
-                                      uriNavigator: UriNavigator): CarrierPaymentNavigator {
-    return CarrierPaymentNavigator(fragment.requireFragmentManager(), uriNavigator,
-        fragment.activity as IabActivity)
+  fun providesCarrierPaymentNavigator(fragment: CarrierPaymentFragment): CarrierPaymentNavigator {
+    //This should have it's own provider in the IabActivity, but it's not in the scope of this branch
+    return CarrierPaymentNavigator(fragment.parentFragmentManager,
+        fragment.activity as UriNavigator, fragment.activity as IabActivity)
   }
 
   @Provides
@@ -48,7 +52,7 @@ class CarrierPaymentModule {
   }
 
   @Provides
-  fun providesUriNavigator(fragment: CarrierPaymentFragment): UriNavigator {
-    return fragment.activity as UriNavigator
+  fun providesCarrierPaymentFragment(fragment: Fragment): CarrierPaymentFragment {
+    return fragment as CarrierPaymentFragment
   }
 }

@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.ui.iab.payments.carrier.verify
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.ui.iab.IabActivity
@@ -9,16 +10,19 @@ import com.asfoundation.wallet.util.StringProvider
 import com.asfoundation.wallet.util.applicationinfo.ApplicationInfoProvider
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.math.BigDecimal
 
+@InstallIn(FragmentComponent::class)
 @Module
 class CarrierVerifyModule {
 
   @Provides
   fun providesCarrierVerifyNavigator(fragment: CarrierVerifyFragment): CarrierVerifyNavigator {
-    return CarrierVerifyNavigator(fragment.requireFragmentManager(),
+    return CarrierVerifyNavigator(fragment.parentFragmentManager,
         fragment.activity as IabActivity)
   }
 
@@ -51,5 +55,10 @@ class CarrierVerifyModule {
     return CarrierVerifyPresenter(CompositeDisposable(), fragment as CarrierVerifyView, data,
         navigator, interactor, billingAnalytics, applicationInfoProvider, stringProvider,
         CurrencyFormatUtils(), logger, AndroidSchedulers.mainThread())
+  }
+
+  @Provides
+  fun providesCarrierVerifyFragment(fragment: Fragment): CarrierVerifyFragment {
+    return fragment as CarrierVerifyFragment
   }
 }
