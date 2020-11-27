@@ -92,7 +92,8 @@ class RepositoryModule {
 
   @Singleton
   @Provides
-  fun providesAppCoinsOperationRepository(@ApplicationContext context: Context): AppCoinsOperationRepository {
+  fun providesAppCoinsOperationRepository(
+      @ApplicationContext context: Context): AppCoinsOperationRepository {
     return AppCoinsOperationRepository(
         Room.databaseBuilder(context.applicationContext, AppCoinsOperationDatabase::class.java,
             "appcoins_operations_data")
@@ -241,7 +242,8 @@ class RepositoryModule {
 
   @Singleton
   @Provides
-  fun provideSupportRepository(preferences: SupportSharedPreferences, app: App): SupportRepository {
-    return SupportRepository(preferences, app)
+  fun provideSupportRepository(preferences: SupportSharedPreferences,
+                               @ApplicationContext context: Context): SupportRepository {
+    return SupportRepository(preferences, context as App)
   }
 }

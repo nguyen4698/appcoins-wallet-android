@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.restore.password
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.restore.intro.RestoreWalletInteractor
 import com.asfoundation.wallet.ui.balance.BalanceInteractor
@@ -38,8 +39,13 @@ class RestoreWalletPasswordModule {
   }
 
   @Provides
-  fun provideRestoreWalletPasswordInteractor(gson: Gson, balanceInteractor: BalanceInteractor,
-                                             restoreWalletInteractor: RestoreWalletInteractor): RestoreWalletPasswordInteractor {
+  fun providesRestoreWalletPasswordInteractor(gson: Gson, balanceInteractor: BalanceInteractor,
+                                              restoreWalletInteractor: RestoreWalletInteractor): RestoreWalletPasswordInteractor {
     return RestoreWalletPasswordInteractor(gson, balanceInteractor, restoreWalletInteractor)
+  }
+
+  @Provides
+  fun providesRestoreWalletPasswordFragment(fragment: Fragment): RestoreWalletPasswordFragment {
+    return fragment as RestoreWalletPasswordFragment
   }
 }

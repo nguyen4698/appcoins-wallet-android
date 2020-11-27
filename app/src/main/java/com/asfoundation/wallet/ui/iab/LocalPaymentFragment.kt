@@ -17,7 +17,6 @@ import com.asfoundation.wallet.navigator.UriNavigator
 import com.asfoundation.wallet.ui.iab.LocalPaymentView.ViewState
 import com.asfoundation.wallet.ui.iab.LocalPaymentView.ViewState.*
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

@@ -20,7 +20,6 @@ import com.asfoundation.wallet.ui.iab.IabView
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

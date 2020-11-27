@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.restore.intro
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.ActivityNavigatorContract
@@ -35,5 +36,10 @@ class RestoreWalletModule {
   @Provides
   fun providesNavigator(fragment: RestoreWalletFragment): ActivityNavigatorContract {
     return fragment.activity as RestoreWalletActivity
+  }
+
+  @Provides
+  fun providesFragment(fragment: Fragment): RestoreWalletFragment {
+    return fragment as RestoreWalletFragment
   }
 }

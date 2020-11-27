@@ -29,7 +29,6 @@ import com.asfoundation.wallet.poa.ProofSubmissionData;
 import com.asfoundation.wallet.repository.WrongNetworkException;
 import com.asfoundation.wallet.ui.TransactionsActivity;
 import com.asfoundation.wallet.wallet_validation.dialog.WalletValidationBroadcastReceiver;
-import dagger.android.AndroidInjection;
 import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -85,11 +84,6 @@ public class WalletPoAService extends Service {
   private Disposable startedEventDisposable;
   private Disposable completedEventDisposable;
   private String appName;
-
-  @Override public void onCreate() {
-    super.onCreate();
-    AndroidInjection.inject(this);
-  }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent != null && intent.hasExtra(PARAM_APP_PACKAGE_NAME)) {

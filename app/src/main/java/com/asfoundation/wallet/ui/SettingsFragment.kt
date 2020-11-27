@@ -17,7 +17,6 @@ import com.asfoundation.wallet.billing.analytics.PageViewAnalytics
 import com.asfoundation.wallet.permissions.manage.view.ManagePermissionsActivity
 import com.asfoundation.wallet.restore.RestoreWalletActivity
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -50,7 +49,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SettingsView {
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidSupportInjection.inject(this)
     super.onCreate(savedInstanceState)
     switchSubject = PublishSubject.create()
     presenter =

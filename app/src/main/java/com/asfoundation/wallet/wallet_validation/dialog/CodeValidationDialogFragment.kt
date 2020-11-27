@@ -45,7 +45,7 @@ class CodeValidationDialogFragment : BasePageViewFragment(), CodeValidationDialo
 
   val countryCode: String by lazy {
     if (arguments!!.containsKey(PhoneValidationDialogFragment.COUNTRY_CODE)) {
-      arguments!!.getString(PhoneValidationDialogFragment.COUNTRY_CODE)
+      arguments!!.getString(PhoneValidationDialogFragment.COUNTRY_CODE)!!
     } else {
       throw IllegalArgumentException("Country Code not passed")
     }
@@ -53,7 +53,7 @@ class CodeValidationDialogFragment : BasePageViewFragment(), CodeValidationDialo
 
   val phoneNumber: String by lazy {
     if (arguments!!.containsKey(PhoneValidationDialogFragment.PHONE_NUMBER)) {
-      arguments!!.getString(PhoneValidationDialogFragment.PHONE_NUMBER)
+      arguments!!.getString(PhoneValidationDialogFragment.PHONE_NUMBER)!!
     } else {
       throw IllegalArgumentException("Phone Number not passed")
     }

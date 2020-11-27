@@ -76,7 +76,7 @@ class InviteFriendsVerificationFragment : BasePageViewFragment(), InviteFriendsV
 
   val currency: String by lazy {
     if (arguments!!.containsKey(CURRENCY)) {
-      arguments!!.getString(CURRENCY)
+      arguments!!.getString(CURRENCY)!!
     } else {
       throw IllegalArgumentException("Currency not found")
     }

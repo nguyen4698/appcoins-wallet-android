@@ -13,6 +13,7 @@ import androidx.annotation.StringRes;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 import com.asf.wallet.R;
+import com.asfoundation.wallet.GlideApp;
 import com.asfoundation.wallet.entity.NetworkInfo;
 import com.asfoundation.wallet.entity.Wallet;
 import com.asfoundation.wallet.transactions.Operation;

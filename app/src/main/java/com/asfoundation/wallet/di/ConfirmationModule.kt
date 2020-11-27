@@ -8,9 +8,9 @@ import com.asfoundation.wallet.viewmodel.ConfirmationViewModelFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.components.ActivityComponent
 
-@InstallIn(FragmentComponent::class)
+@InstallIn(ActivityComponent::class)
 @Module(includes = [SendModule::class])
 class ConfirmationModule {
 

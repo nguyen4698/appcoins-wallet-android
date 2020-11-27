@@ -187,7 +187,7 @@ class AppcoinsRewardsBuyFragment : BasePageViewFragment(), AppcoinsRewardsBuyVie
 
   private val transactionBuilder: TransactionBuilder by lazy {
     if (arguments!!.containsKey(TRANSACTION_KEY)) {
-      arguments!!.getParcelable(TRANSACTION_KEY) as TransactionBuilder
+      arguments!!.getParcelable<TransactionBuilder>(TRANSACTION_KEY) as TransactionBuilder
     } else {
       throw IllegalArgumentException("transaction data not found")
     }
