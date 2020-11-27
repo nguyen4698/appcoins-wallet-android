@@ -126,7 +126,7 @@ class App : MultiDexApplication(), BillingDependenciesProvider {
   }
 
   private fun initiateFlurry() {
-    if (BuildConfig.DEBUG) {
+    if (!BuildConfig.DEBUG) {
       FlurryAgent.Builder()
           .withLogEnabled(false)
           .build(this, BuildConfig.FLURRY_APK_KEY)
