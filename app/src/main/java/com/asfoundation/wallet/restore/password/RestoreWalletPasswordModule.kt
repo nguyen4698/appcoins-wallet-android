@@ -25,9 +25,8 @@ class RestoreWalletPasswordModule {
                                              eventSender: WalletsEventSender,
                                              currencyFormatUtils: CurrencyFormatUtils): RestoreWalletPasswordPresenter {
     return RestoreWalletPasswordPresenter(fragment as RestoreWalletPasswordView, data, interactor,
-        eventSender, currencyFormatUtils,
-        CompositeDisposable(), AndroidSchedulers.mainThread(), Schedulers.io(),
-        Schedulers.computation())
+        eventSender, currencyFormatUtils, CompositeDisposable(), AndroidSchedulers.mainThread(),
+        Schedulers.io(), Schedulers.computation())
   }
 
   @Provides
