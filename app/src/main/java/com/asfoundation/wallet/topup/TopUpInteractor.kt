@@ -7,7 +7,7 @@ import com.appcoins.wallet.bdsbilling.repository.entity.PaymentMethodEntity
 import com.appcoins.wallet.gamification.repository.ForecastBonusAndLevel
 import com.asfoundation.wallet.backup.NotificationNeeded
 import com.asfoundation.wallet.service.LocalCurrencyConversionService
-import com.asfoundation.wallet.support.SupportRepository
+import com.asfoundation.wallet.support.SupportInteractor
 import com.asfoundation.wallet.ui.gamification.GamificationInteractor
 import com.asfoundation.wallet.ui.iab.FiatValue
 import com.asfoundation.wallet.ui.iab.InAppPurchaseInteractor
@@ -29,11 +29,11 @@ class TopUpInteractor(private val repository: BdsRepository,
                       private var limitValues: TopUpLimitValues,
                       private var walletBlockedInteract: WalletBlockedInteract,
                       private var inAppPurchaseInteractor: InAppPurchaseInteractor,
-                      private var supportRepository: SupportRepository) {
+                      private var supportInteractor: SupportInteractor) {
 
 
   fun getPaymentMethods(value: String, currency: String): Single<List<PaymentMethod>> {
-    return repository.getPaymentMethods(value, currency, "fiat", true)
+    return repository.getPaymentMethods(value, currency, "fiat", true, "TOPUP")
         .map { mapPaymentMethods(it) }
   }
 
@@ -49,10 +49,7 @@ class TopUpInteractor(private val repository: BdsRepository,
         .flatMapCompletable { level ->
           inAppPurchaseInteractor.walletAddress
               .flatMapCompletable { wallet ->
-                Completable.fromAction {
-                  supportRepository.registerUser(level, wallet.toLowerCase(Locale.ROOT))
-                  supportRepository.displayChatScreen()
-                }
+                supportInteractor.showSupport(wallet, level)
               }
         }
   }
@@ -68,7 +65,7 @@ class TopUpInteractor(private val repository: BdsRepository,
   private fun mapPaymentMethods(
       paymentMethods: List<PaymentMethodEntity>): List<PaymentMethod> {
     return paymentMethods.map {
-      PaymentMethod(it.id, it.label, it.iconUrl,
+      PaymentMethod(it.id, it.label, it.iconUrl, it.async,
           mapPaymentMethodFee(it.fee), it.isAvailable(), null)
     }
   }

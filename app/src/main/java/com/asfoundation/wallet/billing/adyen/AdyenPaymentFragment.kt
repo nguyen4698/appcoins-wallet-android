@@ -37,9 +37,9 @@ import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.navigator.UriNavigator
 import com.asfoundation.wallet.service.ServicesErrorCodeMapper
-import com.asfoundation.wallet.ui.iab.FragmentNavigator
 import com.asfoundation.wallet.ui.iab.IabActivity.Companion.BILLING_ADDRESS_REQUEST_CODE
 import com.asfoundation.wallet.ui.iab.IabActivity.Companion.BILLING_ADDRESS_SUCCESS_CODE
+import com.asfoundation.wallet.ui.iab.IabNavigator
 import com.asfoundation.wallet.ui.iab.IabView
 import com.asfoundation.wallet.ui.iab.InAppPurchaseInteractor
 import com.asfoundation.wallet.util.CurrencyFormatUtils
@@ -120,7 +120,7 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
     paymentDetailsSubject = PublishSubject.create()
     adyen3DSErrorSubject = PublishSubject.create()
     billingAddressInput = PublishSubject.create()
-    val navigator = FragmentNavigator(activity as UriNavigator?, iabView)
+    val navigator = IabNavigator(requireFragmentManager(), activity as UriNavigator?, iabView)
     compositeDisposable = CompositeDisposable()
     presenter =
         AdyenPaymentPresenter(this, compositeDisposable, AndroidSchedulers.mainThread(),
@@ -432,6 +432,7 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
     val height = resources.getDimensionPixelSize(R.dimen.adyen_text_input_layout_height)
 
     adyenCardNumberLayout.minimumHeight = height
+    adyenCardNumberLayout.errorIconDrawable = null
     adyenExpiryDateLayout.minimumHeight = height
     adyenSecurityCodeLayout.minimumHeight = height
   }

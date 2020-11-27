@@ -2,7 +2,6 @@ package com.asfoundation.wallet.topup
 
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -30,6 +29,7 @@ import com.asfoundation.wallet.ui.iab.FiatValue
 import com.asfoundation.wallet.ui.iab.PaymentMethod
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
+import com.asfoundation.wallet.util.convertDpToPx
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.jakewharton.rxrelay2.PublishRelay
@@ -100,9 +100,7 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
     fragmentView?.let {
       val heightDiff: Int = it.rootView.height - it.height - appBarHeight
 
-      val threshold = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150f,
-          requireContext().resources.displayMetrics)
-          .toInt()
+      val threshold = 150.convertDpToPx(resources)
 
       keyboardEvents.onNext(heightDiff > threshold)
     }
@@ -192,10 +190,10 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
       val orientation = resources.configuration.orientation
       val params: LayoutParams = payment_methods.layoutParams as LayoutParams
       if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        params.height = dpToPx(164f)
+        params.height = 164.convertDpToPx(resources)
       }
       if (orientation == Configuration.ORIENTATION_PORTRAIT && paymentMethods.size > 3) {
-        params.height = dpToPx(228f)
+        params.height = 228.convertDpToPx(resources)
       }
       payment_methods.layoutParams = params
     }
@@ -439,7 +437,7 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
 
   override fun changeMainValueColor(isValid: Boolean) {
     if (isValid) {
-      main_value.setTextColor(ContextCompat.getColor(context!!, R.color.black))
+      main_value.setTextColor(ContextCompat.getColor(context!!, R.color.fakeBlack))
     } else {
       main_value.setTextColor(ContextCompat.getColor(context!!, R.color.color_grey_9e))
     }
@@ -544,7 +542,7 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
         PaymentType.CARD.subTypes.contains(data.id) ->
           PaymentTypeInfo(PaymentType.CARD, data.id, data.label, data.iconUrl)
         else -> PaymentTypeInfo(PaymentType.LOCAL_PAYMENTS, data.id, data.label,
-            data.iconUrl)
+            data.iconUrl, data.async)
       }
     } else {
       null
@@ -588,10 +586,6 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
     }
   }
 
-  private fun dpToPx(value: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value,
-      Resources.getSystem().displayMetrics)
-      .toInt()
-
   private fun getTopUpValuesSpanCount(): Int {
     val screenWidth =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,
@@ -599,11 +593,7 @@ class TopUpFragment : Fragment(), TopUpFragmentView {
             requireContext().resources
                 .displayMetrics)
             .toInt()
-
-    val viewWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80f,
-        requireContext().resources
-            .displayMetrics)
-        .toInt()
+    val viewWidth = 80.convertDpToPx(resources)
 
     return screenWidth / viewWidth
   }

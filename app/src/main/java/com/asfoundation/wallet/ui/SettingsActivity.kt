@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import com.asf.wallet.R
 import com.asfoundation.wallet.router.TransactionsRouter
-import com.asfoundation.wallet.ui.backup.WalletBackupActivity
+import com.asfoundation.wallet.ui.backup.BackupActivity
 import com.asfoundation.wallet.ui.wallets.WalletsModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
@@ -54,7 +54,7 @@ class SettingsActivity : BaseActivity(), SettingsActivityView {
   }
 
   override fun navigateToBackup(address: String, popBackStack: Boolean) {
-    startActivity(WalletBackupActivity.newIntent(this, address))
+    startActivity(BackupActivity.newIntent(this, address))
     if (popBackStack) supportFragmentManager.popBackStack()
   }
 

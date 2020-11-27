@@ -38,7 +38,6 @@ import kotlinx.android.synthetic.main.payment_methods_layout.error_message
 import kotlinx.android.synthetic.main.selected_payment_method.*
 import kotlinx.android.synthetic.main.support_error_layout.*
 import kotlinx.android.synthetic.main.support_error_layout.view.error_message
-import kotlinx.android.synthetic.main.view_purchase_bonus.*
 import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
@@ -100,6 +99,7 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
   private var isPreSelected = false
   private var itemAlreadyOwnedError = false
   private var bonusMessageValue = ""
+  private var bonusValue: BigDecimal? = null
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -290,8 +290,8 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
 
   override fun showSkeletonLoading() {
     showPaymentsSkeletonLoading()
-    bonus_layout_skeleton.visibility = View.VISIBLE
-    bonus_msg_skeleton.visibility = View.VISIBLE
+    bonus_view.visibility = View.VISIBLE
+    bonus_view.showSkeleton()
   }
 
   override fun showProgressBarLoading() {
@@ -360,6 +360,10 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
     return RxView.clicks(buy_button)
   }
 
+  override fun showCarrierBilling(fiatValue: FiatValue, isPreselected: Boolean) {
+    iabView.showCarrierBilling(fiatValue.currency, fiatValue.amount, bonusValue, isPreselected)
+  }
+
   override fun showPaypal(gamificationLevel: Int, fiatValue: FiatValue) {
     iabView.showAdyenPayment(fiatValue.amount, fiatValue.currency, isBds,
         PaymentType.PAYPAL, bonusMessageValue, false, null, gamificationLevel)
@@ -411,7 +415,7 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
   }
 
   override fun showLocalPayment(selectedPaymentMethod: String, iconUrl: String, label: String,
-                                gamificationLevel: Int) {
+                                async: Boolean, gamificationLevel: Int) {
     val isOneStep: Boolean = transactionBuilder!!.type
         .equals("INAPP_UNMANAGED", ignoreCase = true)
     iabView.showLocalPayment(transactionBuilder!!.domain, transactionBuilder!!.skuId,
@@ -419,7 +423,7 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
         if (isOneStep) transactionBuilder!!.originalOneStepCurrency else null, bonusMessageValue,
         selectedPaymentMethod, transactionBuilder!!.toAddress(), transactionBuilder!!.type,
         transactionBuilder!!.amount(), transactionBuilder!!.callbackUrl,
-        transactionBuilder!!.orderReference, transactionBuilder!!.payload, iconUrl, label,
+        transactionBuilder!!.orderReference, transactionBuilder!!.payload, iconUrl, label, async,
         gamificationLevel)
   }
 
@@ -433,7 +437,8 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
     scaledBonus = scaledBonus.max(BigDecimal("0.01"))
     val formattedBonus = formatter.formatCurrency(scaledBonus, WalletCurrency.FIAT)
     bonusMessageValue = newCurrencyString + formattedBonus
-    bonus_value.text = getString(R.string.gamification_purchase_header_part_2, bonusMessageValue)
+    bonusValue = bonus
+    bonus_view.setPurchaseBonusHeaderValue(bonus, currency)
   }
 
   override fun onBackPressed(): Observable<Boolean> {
@@ -463,33 +468,31 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
   }
 
   override fun showBonus() {
-    bonus_layout.visibility = View.VISIBLE
-    bonus_msg.visibility = View.VISIBLE
-    no_bonus_msg?.visibility = View.INVISIBLE
+    bonus_view.visibility = View.VISIBLE
+    bonus_view.showPurchaseBonusHeader()
     bottom_separator?.visibility = View.VISIBLE
-    removeBonusSkeletons()
+    bonus_view.hideSkeleton()
   }
 
   override fun removeBonus() {
-    bonus_layout.visibility = View.GONE
-    bonus_msg.visibility = View.GONE
-    no_bonus_msg?.visibility = View.GONE
+    bonusMessageValue = ""
+    bonusValue = null
+    bonus_view.visibility = View.GONE
     bottom_separator?.visibility = View.GONE
-    removeBonusSkeletons()
+    bonus_view.hideSkeleton()
   }
 
   override fun hideBonus() {
-    bonus_layout.visibility = View.INVISIBLE
-    bonus_msg.visibility = View.INVISIBLE
+    bonus_view.visibility = View.INVISIBLE
     bottom_separator?.visibility = View.INVISIBLE
-    removeBonusSkeletons()
+    bonus_view.hideSkeleton()
   }
 
   override fun replaceBonus() {
-    bonus_layout.visibility = View.INVISIBLE
-    bonus_msg.visibility = View.INVISIBLE
-    no_bonus_msg?.visibility = View.VISIBLE
-    removeBonusSkeletons()
+    bonus_view.visibility = View.INVISIBLE
+    bonus_view.setPurchaseBonusDescription(getString(R.string.purchase_poa_body))
+    bonus_view.hidePurchaseBonusHeader()
+    bonus_view.hideSkeleton()
   }
 
   override fun onAuthenticationResult(): Observable<Boolean> {
@@ -589,16 +592,11 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
     }
   }
 
-  private fun removeBonusSkeletons() {
-    bonus_layout_skeleton.visibility = View.GONE
-    bonus_msg_skeleton.visibility = View.GONE
-  }
-
   private fun removeSkeletons() {
     fiat_price_skeleton.visibility = View.GONE
     appc_price_skeleton.visibility = View.GONE
     payments_skeleton.visibility = View.GONE
-    removeBonusSkeletons()
+    bonus_view.hideSkeleton()
   }
 
 }

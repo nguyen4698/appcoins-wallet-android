@@ -1,11 +1,16 @@
 package com.asfoundation.wallet.util
 
+import android.animation.LayoutTransition
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -85,4 +90,48 @@ inline fun <T> Iterable<T>.sumByBigDecimal(selector: (T) -> BigDecimal): BigDeci
     sum += selector(element)
   }
   return sum
+}
+
+fun Int.convertDpToPx(resources: Resources): Int {
+  return TypedValue.applyDimension(
+      TypedValue.COMPLEX_UNIT_DIP,
+      this.toFloat(),
+      resources.displayMetrics
+  )
+      .toInt()
+}
+
+fun <T1 : Any, T2 : Any, R : Any> safeLet(p1: T1?, p2: T2?, block: (T1, T2) -> R?): R? {
+  return if (p1 != null && p2 != null) block(p1, p2) else null
+}
+
+/**
+ * Verifies and assigns the nullability of every input value. If at least one of the values is null,
+ * it executes the closure function.
+ */
+inline fun <T : Any> guardLet(vararg elements: T?, closure: () -> Nothing): List<T> {
+  return if (elements.all { it != null }) {
+    elements.filterNotNull()
+  } else {
+    closure()
+  }
+}
+
+/**
+ * Executes block function with no layout transition animations. Note that it assumes that there is
+ * no LayoutTransition.CHANGING, which is the case by default in "animateLayoutChanges".
+ *
+ * @see LayoutTransition.CHANGING
+ */
+inline fun View.withNoLayoutTransition(block: () -> Unit) {
+  val lt = (this.parent as ViewGroup).layoutTransition
+  lt.disableTransitionType(LayoutTransition.APPEARING)
+  lt.disableTransitionType(LayoutTransition.CHANGE_APPEARING)
+  lt.disableTransitionType(LayoutTransition.DISAPPEARING)
+  lt.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING)
+  block()
+  lt.enableTransitionType(LayoutTransition.APPEARING)
+  lt.enableTransitionType(LayoutTransition.CHANGE_APPEARING)
+  lt.enableTransitionType(LayoutTransition.DISAPPEARING)
+  lt.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING)
 }

@@ -205,7 +205,7 @@ class MergedAppcoinsFragment : Fragment(), MergedAppcoinsView {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val navigator = FragmentNavigator(activity as UriNavigator?, iabView)
+    val navigator = IabNavigator(requireFragmentManager(), activity as UriNavigator?, iabView)
     paymentSelectionSubject = PublishSubject.create()
     mergedAppcoinsPresenter =
         MergedAppcoinsPresenter(this, CompositeDisposable(), CompositeDisposable(),

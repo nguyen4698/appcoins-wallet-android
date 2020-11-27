@@ -25,7 +25,7 @@ import javax.inject.Inject
 class AlarmManagerBroadcastReceiver : BroadcastReceiver() {
 
   @Inject
-  lateinit var supportRepository: SupportRepository
+  lateinit var supportInteractor: SupportInteractor
 
   lateinit var notificationManager: NotificationManager
 
@@ -53,8 +53,8 @@ class AlarmManagerBroadcastReceiver : BroadcastReceiver() {
     notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    if (supportRepository.shouldShowNotification()) {
-      supportRepository.updateUnreadConversations()
+    if (supportInteractor.hasNewUnreadConversations()) {
+      supportInteractor.updateUnreadConversations()
       notificationManager.notify(NOTIFICATION_SERVICE_ID, createNotification(context).build())
     }
   }
