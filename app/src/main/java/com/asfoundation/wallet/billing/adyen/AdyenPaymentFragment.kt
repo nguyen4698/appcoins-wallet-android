@@ -120,12 +120,13 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
     paymentDetailsSubject = PublishSubject.create()
     adyen3DSErrorSubject = PublishSubject.create()
     billingAddressInput = PublishSubject.create()
-    val navigator = IabNavigator(requireFragmentManager(), activity as UriNavigator?, iabView)
+    val navigator = IabNavigator(parentFragmentManager, activity as UriNavigator?, iabView)
     compositeDisposable = CompositeDisposable()
     presenter =
         AdyenPaymentPresenter(this, compositeDisposable, AndroidSchedulers.mainThread(),
-            Schedulers.io(), RedirectComponent.getReturnUrl(context!!), analytics, domain, origin,
-            adyenPaymentInteractor, inAppPurchaseInteractor.parseTransaction(transactionData, true),
+            Schedulers.io(), RedirectComponent.getReturnUrl(requireContext()), analytics, domain,
+            origin, adyenPaymentInteractor,
+            inAppPurchaseInteractor.parseTransaction(transactionData, true),
             navigator, paymentType, transactionType, amount, currency, isPreSelected,
             AdyenErrorCodeMapper(), servicesErrorMapper, gamificationLevel, formatter, logger)
   }
@@ -221,7 +222,7 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
 
   override fun showProduct() {
     try {
-      app_icon?.setImageDrawable(context!!.packageManager
+      app_icon?.setImageDrawable(requireContext().packageManager
           .getApplicationIcon(domain))
       app_name?.text = getApplicationName(domain)
     } catch (e: Exception) {
@@ -355,7 +356,7 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
 
 
   override fun handle3DSAction(action: Action) {
-    adyen3DS2Component.handleAction(activity!!, action)
+    adyen3DS2Component.handleAction(requireActivity(), action)
   }
 
   override fun onAdyen3DSError(): Observable<String> = adyen3DSErrorSubject!!
@@ -449,7 +450,7 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
 
   @Throws(PackageManager.NameNotFoundException::class)
   private fun getApplicationName(appPackage: String): CharSequence? {
-    val packageManager = context!!.packageManager
+    val packageManager = requireContext().packageManager
     val packageInfo = packageManager.getApplicationInfo(appPackage, 0)
     return packageManager.getApplicationLabel(packageInfo)
   }
@@ -645,96 +646,96 @@ class AdyenPaymentFragment : Fragment(), AdyenPaymentView {
   }
 
   private val transactionType: String by lazy {
-    if (arguments!!.containsKey(TRANSACTION_TYPE_KEY)) {
-      arguments!!.getString(TRANSACTION_TYPE_KEY, "")
+    if (requireArguments().containsKey(TRANSACTION_TYPE_KEY)) {
+      requireArguments().getString(TRANSACTION_TYPE_KEY, "")
     } else {
       throw IllegalArgumentException("transaction type data not found")
     }
   }
 
   private val paymentType: String by lazy {
-    if (arguments!!.containsKey(PAYMENT_TYPE_KEY)) {
-      arguments!!.getString(PAYMENT_TYPE_KEY, "")
+    if (requireArguments().containsKey(PAYMENT_TYPE_KEY)) {
+      requireArguments().getString(PAYMENT_TYPE_KEY, "")
     } else {
       throw IllegalArgumentException("payment type data not found")
     }
   }
 
   private val domain: String by lazy {
-    if (arguments!!.containsKey(DOMAIN_KEY)) {
-      arguments!!.getString(DOMAIN_KEY, "")
+    if (requireArguments().containsKey(DOMAIN_KEY)) {
+      requireArguments().getString(DOMAIN_KEY, "")
     } else {
       throw IllegalArgumentException("domain data not found")
     }
   }
 
   private val origin: String? by lazy {
-    if (arguments!!.containsKey(ORIGIN_KEY)) {
-      arguments!!.getString(ORIGIN_KEY)
+    if (requireArguments().containsKey(ORIGIN_KEY)) {
+      requireArguments().getString(ORIGIN_KEY)
     } else {
       throw IllegalArgumentException("origin not found")
     }
   }
 
   private val transactionData: String by lazy {
-    if (arguments!!.containsKey(TRANSACTION_DATA_KEY)) {
-      arguments!!.getString(TRANSACTION_DATA_KEY, "")
+    if (requireArguments().containsKey(TRANSACTION_DATA_KEY)) {
+      requireArguments().getString(TRANSACTION_DATA_KEY, "")
     } else {
       throw IllegalArgumentException("transaction data not found")
     }
   }
 
   private val appcAmount: BigDecimal by lazy {
-    if (arguments!!.containsKey(APPC_AMOUNT_KEY)) {
-      arguments!!.getSerializable(APPC_AMOUNT_KEY) as BigDecimal
+    if (requireArguments().containsKey(APPC_AMOUNT_KEY)) {
+      requireArguments().getSerializable(APPC_AMOUNT_KEY) as BigDecimal
     } else {
       throw IllegalArgumentException("appc amount data not found")
     }
   }
 
   private val amount: BigDecimal by lazy {
-    if (arguments!!.containsKey(AMOUNT_KEY)) {
-      arguments!!.getSerializable(AMOUNT_KEY) as BigDecimal
+    if (requireArguments().containsKey(AMOUNT_KEY)) {
+      requireArguments().getSerializable(AMOUNT_KEY) as BigDecimal
     } else {
       throw IllegalArgumentException("amount data not found")
     }
   }
 
   private val currency: String by lazy {
-    if (arguments!!.containsKey(CURRENCY_KEY)) {
-      arguments!!.getString(CURRENCY_KEY, "")
+    if (requireArguments().containsKey(CURRENCY_KEY)) {
+      requireArguments().getString(CURRENCY_KEY, "")
     } else {
       throw IllegalArgumentException("currency data not found")
     }
   }
 
   private val bonus: String by lazy {
-    if (arguments!!.containsKey(BONUS_KEY)) {
-      arguments!!.getString(BONUS_KEY, "")
+    if (requireArguments().containsKey(BONUS_KEY)) {
+      requireArguments().getString(BONUS_KEY, "")
     } else {
       throw IllegalArgumentException("bonus data not found")
     }
   }
 
   private val isPreSelected: Boolean by lazy {
-    if (arguments!!.containsKey(PRE_SELECTED_KEY)) {
-      arguments!!.getBoolean(PRE_SELECTED_KEY)
+    if (requireArguments().containsKey(PRE_SELECTED_KEY)) {
+      requireArguments().getBoolean(PRE_SELECTED_KEY)
     } else {
       throw IllegalArgumentException("pre selected data not found")
     }
   }
 
   private val gamificationLevel: Int by lazy {
-    if (arguments!!.containsKey(GAMIFICATION_LEVEL)) {
-      arguments!!.getInt(GAMIFICATION_LEVEL)
+    if (requireArguments().containsKey(GAMIFICATION_LEVEL)) {
+      requireArguments().getInt(GAMIFICATION_LEVEL)
     } else {
       throw IllegalArgumentException("gamification level data not found")
     }
   }
 
   private val skuDescription: String by lazy {
-    if (arguments!!.containsKey(SKU_DESCRIPTION)) {
-      arguments!!.getString(SKU_DESCRIPTION, "")
+    if (requireArguments().containsKey(SKU_DESCRIPTION)) {
+      requireArguments().getString(SKU_DESCRIPTION, "")
     } else {
       throw IllegalArgumentException("sku description data not found")
     }

@@ -113,7 +113,7 @@ class AdyenTopUpFragment : Fragment(R.layout.fragment_adyen_top_up), AdyenTopUpV
 
     presenter =
         AdyenTopUpPresenter(this, appPackage, AndroidSchedulers.mainThread(), Schedulers.io(),
-            CompositeDisposable(), RedirectComponent.getReturnUrl(context!!), paymentType,
+            CompositeDisposable(), RedirectComponent.getReturnUrl(requireContext()), paymentType,
             data.transactionType, data.fiatValue, data.fiatCurrencyCode, data.appcValue,
             data.selectedCurrencyType, navigator, inAppPurchaseInteractor.billingMessagesMapper,
             adyenPaymentInteractor, data.bonusValue, data.fiatCurrencySymbol,
@@ -347,7 +347,7 @@ class AdyenTopUpFragment : Fragment(R.layout.fragment_adyen_top_up), AdyenTopUpV
   }
 
   override fun handle3DSAction(action: Action) {
-    adyen3DS2Component.handleAction(activity!!, action)
+    adyen3DS2Component.handleAction(requireActivity(), action)
   }
 
   override fun onAdyen3DSError(): Observable<String> = adyen3DSErrorSubject!!
@@ -513,23 +513,23 @@ class AdyenTopUpFragment : Fragment(R.layout.fragment_adyen_top_up), AdyenTopUpV
 
   private val appPackage: String by lazy {
     if (activity != null) {
-      activity!!.packageName
+      requireActivity().packageName
     } else {
       throw IllegalArgumentException("previous app package name not found")
     }
   }
 
   private val data: TopUpPaymentData by lazy {
-    if (arguments!!.containsKey(PAYMENT_DATA)) {
-      arguments!!.getSerializable(PAYMENT_DATA) as TopUpPaymentData
+    if (requireArguments().containsKey(PAYMENT_DATA)) {
+      requireArguments().getSerializable(PAYMENT_DATA) as TopUpPaymentData
     } else {
       throw IllegalArgumentException("previous payment data not found")
     }
   }
 
   private val paymentType: String by lazy {
-    if (arguments!!.containsKey(PAYMENT_TYPE)) {
-      arguments!!.getString(PAYMENT_TYPE)!!
+    if (requireArguments().containsKey(PAYMENT_TYPE)) {
+      requireArguments().getString(PAYMENT_TYPE)!!
     } else {
       throw IllegalArgumentException("Payment Type not found")
     }
