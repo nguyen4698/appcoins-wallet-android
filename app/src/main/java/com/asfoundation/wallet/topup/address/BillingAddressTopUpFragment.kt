@@ -12,21 +12,16 @@ import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.billing.address.BillingAddressModel
 import com.asfoundation.wallet.billing.address.BillingAddressTextWatcher
-import com.asfoundation.wallet.navigator.UriNavigator
 import com.asfoundation.wallet.topup.TopUpActivity.Companion.BILLING_ADDRESS_REQUEST_CODE
 import com.asfoundation.wallet.topup.TopUpActivity.Companion.BILLING_ADDRESS_SUCCESS_CODE
 import com.asfoundation.wallet.topup.TopUpActivityView
 import com.asfoundation.wallet.topup.TopUpData
 import com.asfoundation.wallet.topup.TopUpPaymentData
-import com.asfoundation.wallet.topup.adyen.TopUpNavigator
-import com.asfoundation.wallet.ui.iab.Navigator
 import com.asfoundation.wallet.util.CurrencyFormatUtils
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_billing_address_top_up.*
 import kotlinx.android.synthetic.main.layout_billing_address.*
 import kotlinx.android.synthetic.main.view_purchase_bonus.view.*
@@ -38,12 +33,12 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
 
   companion object {
 
-    const val BILLING_ADDRESS_MODEL = "billing_address_model"
-    private const val PAYMENT_DATA = "data"
-    private const val FIAT_AMOUNT_KEY = "fiat_amount"
-    private const val FIAT_CURRENCY_KEY = "fiat_currency"
-    private const val STORE_CARD_KEY = "store_card"
-    private const val IS_STORED_KEY = "is_stored"
+    internal const val BILLING_ADDRESS_MODEL = "billing_address_model"
+    internal const val PAYMENT_DATA = "data"
+    internal const val FIAT_AMOUNT_KEY = "fiat_amount"
+    internal const val FIAT_CURRENCY_KEY = "fiat_currency"
+    internal const val STORE_CARD_KEY = "store_card"
+    internal const val IS_STORED_KEY = "is_stored"
 
     @JvmStatic
     fun newInstance(data: TopUpPaymentData, fiatAmount: String, fiatCurrency: String,
@@ -63,16 +58,10 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
   @Inject
   lateinit var formatter: CurrencyFormatUtils
 
-  private lateinit var topUpView: TopUpActivityView
-  private lateinit var navigator: Navigator
-  private lateinit var presenter: BillingAddressTopUpPresenter
+  @Inject
+  lateinit var presenter: BillingAddressTopUpPresenter
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    presenter =
-        BillingAddressTopUpPresenter(this, CompositeDisposable(), AndroidSchedulers.mainThread(),
-            navigator)
-  }
+  private lateinit var topUpView: TopUpActivityView
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
@@ -81,13 +70,13 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    setupUi()
     presenter.present()
   }
 
-  private fun setupUi() {
-    showBonus()
-    showValues()
+  override fun initializeView(data: TopUpPaymentData, fiatAmount: String, fiatCurrency: String,
+                              shouldStoreCard: Boolean, isStored: Boolean) {
+    showBonus(data)
+    showValues(data, fiatAmount, fiatCurrency)
     setupFieldsListener()
     setupStateAdapter()
     button.setText(R.string.topup_home_button)
@@ -174,10 +163,9 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
     check(
         context is TopUpActivityView) { "billing address fragment must be attached to TopUp activity" }
     topUpView = context
-    navigator = TopUpNavigator(requireFragmentManager(), (activity as UriNavigator?)!!, topUpView)
   }
 
-  private fun showBonus() {
+  private fun showBonus(data: TopUpPaymentData) {
     if (data.bonusValue.compareTo(BigDecimal.ZERO) != 0) {
       bonus_layout?.visibility = VISIBLE
       bonus_msg?.visibility = VISIBLE
@@ -190,7 +178,7 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
     }
   }
 
-  private fun showValues() {
+  private fun showValues(data: TopUpPaymentData, fiatAmount: String, fiatCurrency: String) {
     main_value.visibility = VISIBLE
     val formattedValue = formatter.formatCurrency(data.appcValue, WalletCurrency.CREDITS)
     if (data.selectedCurrencyType == TopUpData.FIAT_CURRENCY) {
@@ -225,45 +213,4 @@ class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
     presenter.stop()
     super.onDestroyView()
   }
-
-  private val fiatAmount: String by lazy {
-    if (arguments!!.containsKey(FIAT_AMOUNT_KEY)) {
-      arguments!!.getString(FIAT_AMOUNT_KEY, "")
-    } else {
-      throw IllegalArgumentException("fiat amount data not found")
-    }
-  }
-
-  private val fiatCurrency: String by lazy {
-    if (arguments!!.containsKey(FIAT_CURRENCY_KEY)) {
-      arguments!!.getString(FIAT_CURRENCY_KEY, "")
-    } else {
-      throw IllegalArgumentException("fiat currency data not found")
-    }
-  }
-
-  private val data: TopUpPaymentData by lazy {
-    if (arguments!!.containsKey(PAYMENT_DATA)) {
-      arguments!!.getSerializable(PAYMENT_DATA) as TopUpPaymentData
-    } else {
-      throw IllegalArgumentException("previous payment data not found")
-    }
-  }
-
-  private val shouldStoreCard: Boolean by lazy {
-    if (arguments!!.containsKey(STORE_CARD_KEY)) {
-      arguments!!.getBoolean(STORE_CARD_KEY)
-    } else {
-      throw IllegalArgumentException("should store card data not found")
-    }
-  }
-
-  private val isStored: Boolean by lazy {
-    if (arguments!!.containsKey(IS_STORED_KEY)) {
-      arguments!!.getBoolean(IS_STORED_KEY)
-    } else {
-      throw IllegalArgumentException("is stored data not found")
-    }
-  }
-
 }

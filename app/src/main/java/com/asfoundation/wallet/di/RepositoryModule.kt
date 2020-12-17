@@ -28,6 +28,8 @@ import com.asfoundation.wallet.billing.share.BdsShareLinkRepository
 import com.asfoundation.wallet.billing.share.BdsShareLinkRepository.BdsShareLinkApi
 import com.asfoundation.wallet.billing.share.ShareLinkRepository
 import com.asfoundation.wallet.entity.NetworkInfo
+import com.asfoundation.wallet.fingerprint.FingerprintPreferencesRepository
+import com.asfoundation.wallet.fingerprint.FingerprintPreferencesRepositoryContract
 import com.asfoundation.wallet.identification.IdsRepository
 import com.asfoundation.wallet.interact.DefaultTokenProvider
 import com.asfoundation.wallet.interact.GetDefaultWalletBalanceInteract
@@ -268,5 +270,12 @@ class RepositoryModule {
   fun provideSupportRepository(preferences: SupportSharedPreferences,
                                @ApplicationContext context: Context): SupportRepository {
     return SupportRepository(preferences, context as App)
+  }
+
+  @Singleton
+  @Provides
+  fun provideFingerprintPreferenceRepository(
+      preferences: SharedPreferences): FingerprintPreferencesRepositoryContract {
+    return FingerprintPreferencesRepository(preferences)
   }
 }
