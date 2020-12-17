@@ -1,9 +1,7 @@
 package com.asfoundation.wallet.ui.iab.payments.common.error
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
@@ -15,15 +13,10 @@ import kotlinx.android.synthetic.main.fragment_iab_error.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class IabErrorFragment : Fragment(), IabErrorView {
+class IabErrorFragment : Fragment(R.layout.fragment_iab_error), IabErrorView {
 
   @Inject
   lateinit var presenter: IabErrorPresenter
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_iab_error, container, false)
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

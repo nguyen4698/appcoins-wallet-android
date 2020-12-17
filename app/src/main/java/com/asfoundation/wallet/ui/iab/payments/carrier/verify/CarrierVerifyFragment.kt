@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
@@ -23,17 +22,12 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CarrierVerifyFragment : Fragment(), CarrierVerifyView {
+class CarrierVerifyFragment : Fragment(R.layout.fragment_carrier_verify_phone), CarrierVerifyView {
 
   @Inject
   lateinit var presenter: CarrierVerifyPresenter
 
   private val phoneNumberChangedSubject = PublishSubject.create<Any>()
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_carrier_verify_phone, container, false)
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

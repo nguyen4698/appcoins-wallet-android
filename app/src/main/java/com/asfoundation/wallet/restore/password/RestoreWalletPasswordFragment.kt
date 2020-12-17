@@ -4,9 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
@@ -21,7 +19,8 @@ import kotlinx.android.synthetic.main.wallet_outlined_card.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RestoreWalletPasswordFragment : Fragment(), RestoreWalletPasswordView {
+class RestoreWalletPasswordFragment : Fragment(R.layout.fragment_restore_wallet_password),
+    RestoreWalletPasswordView {
 
   @Inject
   lateinit var currencyFormatUtils: CurrencyFormatUtils
@@ -44,11 +43,6 @@ class RestoreWalletPasswordFragment : Fragment(), RestoreWalletPasswordView {
     super.onViewCreated(view, savedInstanceState)
     setTextChangeListener()
     presenter.present()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_restore_wallet_password, container, false)
   }
 
   override fun updateUi(address: String, fiatAmount: String, fiatSymbol: String) {

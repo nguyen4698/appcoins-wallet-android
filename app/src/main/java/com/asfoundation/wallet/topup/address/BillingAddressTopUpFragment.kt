@@ -29,7 +29,8 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BillingAddressTopUpFragment : Fragment(), BillingAddressTopUpView {
+class BillingAddressTopUpFragment : Fragment(R.layout.fragment_billing_address_top_up),
+    BillingAddressTopUpView {
 
   companion object {
 

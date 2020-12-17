@@ -53,7 +53,7 @@ class SettingsModule {
 
   @Provides
   fun providesSettingsNavigator(settingsFragment: SettingsFragment): SettingsNavigator {
-    return SettingsNavigator(settingsFragment.requireFragmentManager(), settingsFragment.activity!!)
+    return SettingsNavigator(settingsFragment.parentFragmentManager, settingsFragment.activity!!)
   }
 
   @Provides

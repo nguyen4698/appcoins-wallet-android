@@ -3,7 +3,6 @@ package com.asfoundation.wallet.ui.backup.entry
 import android.animation.LayoutTransition
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -20,7 +19,8 @@ import kotlinx.android.synthetic.main.layout_wallet_backup_info.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BackupWalletFragment : Fragment(), BackupWalletFragmentView {
+class BackupWalletFragment : Fragment(R.layout.fragment_backup_wallet_layout),
+    BackupWalletFragmentView {
 
   @Inject
   lateinit var presenter: BackupWalletPresenter
@@ -44,11 +44,6 @@ class BackupWalletFragment : Fragment(), BackupWalletFragmentView {
     super.onCreate(savedInstanceState)
     passwordSubject = PublishSubject.create()
     onPasswordCheckedSubject = PublishSubject.create()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_backup_wallet_layout, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

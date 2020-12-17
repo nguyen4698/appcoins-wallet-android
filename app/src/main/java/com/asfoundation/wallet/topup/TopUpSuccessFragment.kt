@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
@@ -22,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_top_up_success.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TopUpSuccessFragment : Fragment(), TopUpSuccessFragmentView {
+class TopUpSuccessFragment : Fragment(R.layout.fragment_top_up_success), TopUpSuccessFragmentView {
 
   companion object {
     @JvmStatic
@@ -94,11 +92,6 @@ class TopUpSuccessFragment : Fragment(), TopUpSuccessFragmentView {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     presenter = TopUpSuccessPresenter(this)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_top_up_success, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

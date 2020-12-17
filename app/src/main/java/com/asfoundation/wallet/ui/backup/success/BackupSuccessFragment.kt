@@ -2,21 +2,19 @@ package com.asfoundation.wallet.ui.backup.success
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.ui.backup.BackupActivityView
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_backup_creation_layout.animation
 import kotlinx.android.synthetic.main.fragment_backup_success_layout.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BackupSuccessFragment : Fragment(), BackupSuccessFragmentView {
+class BackupSuccessFragment : Fragment(R.layout.fragment_backup_success_layout),
+    BackupSuccessFragmentView {
 
   @Inject
   lateinit var presenter: BackupSuccessPresenter
@@ -25,11 +23,6 @@ class BackupSuccessFragment : Fragment(), BackupSuccessFragmentView {
   companion object {
     @JvmStatic
     fun newInstance() = BackupSuccessFragment()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_backup_success_layout, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

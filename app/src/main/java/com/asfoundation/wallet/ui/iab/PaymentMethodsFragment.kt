@@ -5,9 +5,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Pair
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -43,7 +41,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
+class PaymentMethodsFragment : Fragment(R.layout.payment_methods_layout), PaymentMethodsView {
 
   companion object {
     private const val IS_BDS = "isBds"
@@ -129,11 +127,6 @@ class PaymentMethodsFragment : Fragment(), PaymentMethodsView {
 
     setBuyButtonText()
     presenter.present(savedInstanceState)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.payment_methods_layout, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

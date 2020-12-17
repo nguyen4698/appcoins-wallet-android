@@ -2,10 +2,8 @@ package com.asfoundation.wallet.ui.overlay
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
-import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
@@ -20,7 +18,7 @@ import kotlinx.android.synthetic.main.overlay_fragment.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class OverlayFragment : Fragment(), OverlayView {
+class OverlayFragment : Fragment(R.layout.overlay_fragment), OverlayView {
 
   @Inject
   lateinit var presenter: OverlayPresenter
@@ -83,11 +81,6 @@ class OverlayFragment : Fragment(), OverlayView {
                 location[0] * 1f + (icon.width / 4f) + (arrow_down_tip.width / 4f)
           }
         })
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.overlay_fragment, container, false)
   }
 
   override fun discoverClick(): Observable<Any> {

@@ -3,9 +3,7 @@ package com.asfoundation.wallet.ui.wallets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.logging.Logger
@@ -27,7 +25,7 @@ import kotlinx.android.synthetic.main.restore_create_buttons_layout.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WalletsFragment : Fragment(), WalletsView {
+class WalletsFragment : Fragment(R.layout.fragment_wallets_bottom_sheet), WalletsView {
 
   @Inject
   lateinit var walletsInteract: WalletsInteract
@@ -64,11 +62,6 @@ class WalletsFragment : Fragment(), WalletsView {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     presenter.present()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_wallets_bottom_sheet, container, false)
   }
 
   @SuppressLint("SetTextI18n")

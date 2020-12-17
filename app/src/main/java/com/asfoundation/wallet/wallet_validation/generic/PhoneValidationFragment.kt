@@ -2,7 +2,6 @@ package com.asfoundation.wallet.wallet_validation.generic
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -25,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PhoneValidationFragment : Fragment(),
+class PhoneValidationFragment : Fragment(R.layout.layout_phone_validation),
     PhoneValidationView {
 
   @Inject
@@ -54,12 +53,6 @@ class PhoneValidationFragment : Fragment(),
 
     presenter = PhoneValidationPresenter(this, walletValidationView, interactor, logger,
         AndroidSchedulers.mainThread(), Schedulers.io(), CompositeDisposable(), analytics)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    fragmentContainer = container!!
-    return inflater.inflate(R.layout.layout_phone_validation, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

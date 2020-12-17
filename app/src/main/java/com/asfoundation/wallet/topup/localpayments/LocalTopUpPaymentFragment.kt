@@ -4,9 +4,7 @@ import android.animation.Animator
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.topup.TopUpActivityView
@@ -15,9 +13,6 @@ import com.asfoundation.wallet.topup.TopUpPaymentData
 import com.asfoundation.wallet.util.WalletCurrency
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.error_top_up_layout.*
 import kotlinx.android.synthetic.main.fragment_adyen_top_up.converted_value
 import kotlinx.android.synthetic.main.fragment_adyen_top_up.loading
@@ -32,7 +27,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LocalTopUpPaymentFragment : Fragment(), LocalTopUpPaymentView {
+class LocalTopUpPaymentFragment : Fragment(R.layout.local_topup_payment_layout),
+    LocalTopUpPaymentView {
 
   @Inject
   lateinit var presenter: LocalTopUpPaymentPresenter
@@ -76,11 +72,6 @@ class LocalTopUpPaymentFragment : Fragment(), LocalTopUpPaymentView {
       throw IllegalStateException("Local topup payment fragment must be attached to Topup activity")
     }
     activityView = context
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.local_topup_payment_layout, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

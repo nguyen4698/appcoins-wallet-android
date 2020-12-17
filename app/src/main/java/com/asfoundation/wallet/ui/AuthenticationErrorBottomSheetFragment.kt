@@ -1,9 +1,7 @@
 package com.asfoundation.wallet.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.jakewharton.rxbinding2.view.RxView
@@ -11,7 +9,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.authentication_error_bottomsheet.*
 
-class AuthenticationErrorBottomSheetFragment : Fragment(), AuthenticationErrorBottomSheetView {
+class AuthenticationErrorBottomSheetFragment : Fragment(R.layout.authentication_error_bottomsheet),
+    AuthenticationErrorBottomSheetView {
 
   private lateinit var presenter: AuthenticationErrorBottomSheetPresenter
 
@@ -42,11 +41,6 @@ class AuthenticationErrorBottomSheetFragment : Fragment(), AuthenticationErrorBo
             CompositeDisposable())
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.authentication_error_bottomsheet, container, false)
-  }
-
   override fun getButtonClick() = RxView.clicks(retry_authentication)
 
   override fun retryAuthentication() {
@@ -55,7 +49,8 @@ class AuthenticationErrorBottomSheetFragment : Fragment(), AuthenticationErrorBo
   }
 
   override fun setMessage() {
-    authentication_error_message.text = getString(R.string.fingerprint_failed_body, errorTimer.toString())
+    authentication_error_message.text =
+        getString(R.string.fingerprint_failed_body, errorTimer.toString())
   }
 
   override fun setupUi() {

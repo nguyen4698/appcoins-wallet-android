@@ -4,9 +4,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
@@ -21,7 +19,7 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CarrierPaymentFragment : Fragment(), CarrierPaymentView {
+class CarrierPaymentFragment : Fragment(R.layout.fragment_carrier_payment_status), CarrierPaymentView {
 
   @Inject
   lateinit var formatter: CurrencyFormatUtils
@@ -29,11 +27,6 @@ class CarrierPaymentFragment : Fragment(), CarrierPaymentView {
   @Inject
   lateinit var presenter: CarrierPaymentPresenter
   lateinit var iabView: IabView
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_carrier_payment_status, container, false)
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

@@ -4,10 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
@@ -61,7 +59,7 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AdyenTopUpFragment : Fragment(), AdyenTopUpView {
+class AdyenTopUpFragment : Fragment(R.layout.fragment_adyen_top_up), AdyenTopUpView {
 
   @Inject
   internal lateinit var inAppPurchaseInteractor: InAppPurchaseInteractor
@@ -128,18 +126,13 @@ class AdyenTopUpFragment : Fragment(), AdyenTopUpView {
     check(
         context is TopUpActivityView) { "Payment Auth fragment must be attached to TopUp activity" }
     topUpView = context
-    navigator = TopUpNavigator(requireFragmentManager(), (activity as UriNavigator?)!!, topUpView)
+    navigator = TopUpNavigator(parentFragmentManager, (activity as UriNavigator?)!!, topUpView)
 
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     presenter.present(savedInstanceState)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_adyen_top_up, container, false)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {

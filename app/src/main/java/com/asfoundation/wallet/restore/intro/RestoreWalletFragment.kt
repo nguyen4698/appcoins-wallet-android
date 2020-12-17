@@ -4,9 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
@@ -20,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_restore_wallet_first.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RestoreWalletFragment : Fragment(), RestoreWalletView {
+class RestoreWalletFragment : Fragment(R.layout.fragment_restore_wallet_first), RestoreWalletView {
 
   @Inject
   lateinit var presenter: RestoreWalletPresenter
@@ -40,11 +38,6 @@ class RestoreWalletFragment : Fragment(), RestoreWalletView {
           "Restore Wallet fragment must be attached to Restore Wallet Activity")
     }
     activityView = context
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_restore_wallet_first, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

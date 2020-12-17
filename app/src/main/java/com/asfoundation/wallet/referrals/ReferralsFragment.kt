@@ -1,11 +1,9 @@
 package com.asfoundation.wallet.referrals
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
 import com.asfoundation.wallet.util.CurrencyFormatUtils
@@ -20,7 +18,7 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
-class ReferralsFragment : Fragment(), ReferralsView {
+class ReferralsFragment : Fragment(R.layout.referrals_layout), ReferralsView {
 
   private lateinit var presenter: ReferralsPresenter
 
@@ -35,11 +33,6 @@ class ReferralsFragment : Fragment(), ReferralsView {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     presenter.present()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.referrals_layout, container, false)
   }
 
   override fun setupLayout() {

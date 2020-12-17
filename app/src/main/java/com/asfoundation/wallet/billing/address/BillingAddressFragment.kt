@@ -3,11 +3,9 @@ package com.asfoundation.wallet.billing.address
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import com.asf.wallet.R
@@ -27,7 +25,7 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BillingAddressFragment : Fragment(), BillingAddressView {
+class BillingAddressFragment : Fragment(R.layout.fragment_billing_address), BillingAddressView {
 
   companion object {
 
@@ -77,11 +75,6 @@ class BillingAddressFragment : Fragment(), BillingAddressView {
   lateinit var presenter: BillingAddressPresenter
 
   private lateinit var iabView: IabView
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_billing_address, container, false)
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

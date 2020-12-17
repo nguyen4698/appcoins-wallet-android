@@ -6,10 +6,8 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
@@ -49,7 +47,7 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MergedAppcoinsFragment : Fragment(), MergedAppcoinsView {
+class MergedAppcoinsFragment : Fragment(R.layout.merged_appcoins_layout), MergedAppcoinsView {
 
   companion object {
     private const val FIAT_AMOUNT_KEY = "fiat_amount"
@@ -218,11 +216,6 @@ class MergedAppcoinsFragment : Fragment(), MergedAppcoinsView {
     super.onAttach(context)
     check(context is IabView) { "Merged Appcoins fragment must be attached to IAB activity" }
     iabView = context
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.merged_appcoins_layout, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

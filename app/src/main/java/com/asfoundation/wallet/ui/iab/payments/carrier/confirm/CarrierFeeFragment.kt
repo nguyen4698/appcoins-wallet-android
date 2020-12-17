@@ -5,9 +5,7 @@ import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannedString
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -29,7 +27,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CarrierFeeFragment : Fragment(), CarrierFeeView {
+class CarrierFeeFragment : Fragment(R.layout.fragment_carrier_confirm), CarrierFeeView {
 
   private val formatter = CurrencyFormatUtils()
 
@@ -37,11 +35,6 @@ class CarrierFeeFragment : Fragment(), CarrierFeeView {
   lateinit var presenter: CarrierFeePresenter
 
   lateinit var iabView: IabView
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_carrier_confirm, container, false)
-  }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)

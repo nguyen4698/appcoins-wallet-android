@@ -2,9 +2,7 @@ package com.asfoundation.wallet.wallet_validation.dialog
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
@@ -23,7 +21,8 @@ import kotlinx.android.synthetic.main.fragment_phone_validation.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PhoneValidationDialogFragment : Fragment(), PhoneValidationDialogView {
+class PhoneValidationDialogFragment : Fragment(R.layout.fragment_phone_validation),
+    PhoneValidationDialogView {
 
   @Inject
   lateinit var interactor: SmsValidationInteract
@@ -63,16 +62,10 @@ class PhoneValidationDialogFragment : Fragment(), PhoneValidationDialogView {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     presenter =
         PhoneValidationDialogPresenter(this,
             walletValidationDialogView, interactor,
             AndroidSchedulers.mainThread(), Schedulers.io(), CompositeDisposable(), analytics)
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.fragment_phone_validation, container, false)
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

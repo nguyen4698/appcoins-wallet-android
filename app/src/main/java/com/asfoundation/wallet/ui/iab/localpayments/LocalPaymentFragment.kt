@@ -5,9 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.airbnb.lottie.FontAssetDelegate
 import com.airbnb.lottie.TextDelegate
@@ -18,9 +16,6 @@ import com.asfoundation.wallet.ui.iab.localpayments.LocalPaymentView.ViewState
 import com.asfoundation.wallet.ui.iab.localpayments.LocalPaymentView.ViewState.*
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_iab_transaction_completed.view.*
 import kotlinx.android.synthetic.main.iab_error_layout.view.*
 import kotlinx.android.synthetic.main.local_payment_layout.*
@@ -32,7 +27,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LocalPaymentFragment : Fragment(), LocalPaymentView {
+class LocalPaymentFragment : Fragment(R.layout.local_payment_layout), LocalPaymentView {
 
   @Inject
   lateinit var localPaymentPresenter: LocalPaymentPresenter
@@ -114,11 +109,6 @@ class LocalPaymentFragment : Fragment(), LocalPaymentView {
   override fun onDestroyView() {
     localPaymentPresenter.handleStop()
     super.onDestroyView()
-  }
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                            savedInstanceState: Bundle?): View? {
-    return inflater.inflate(R.layout.local_payment_layout, container, false)
   }
 
   override fun getErrorDismissClick() = RxView.clicks(error_view.error_dismiss)
