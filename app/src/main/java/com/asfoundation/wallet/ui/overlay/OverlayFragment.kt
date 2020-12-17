@@ -14,13 +14,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jakewharton.rxbinding2.view.RxView
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.overlay_fragment.*
 import javax.inject.Inject
 
-
-class OverlayFragment : DaggerFragment(), OverlayView {
+@AndroidEntryPoint
+class OverlayFragment : Fragment(), OverlayView {
 
   @Inject
   lateinit var presenter: OverlayPresenter

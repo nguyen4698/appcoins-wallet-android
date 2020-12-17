@@ -1,5 +1,6 @@
 package com.asfoundation.wallet.ui.settings.entry
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.fingerprint.FingerprintPreferencesRepositoryContract
 import com.asfoundation.wallet.interact.AutoUpdateInteract
@@ -10,10 +11,13 @@ import com.asfoundation.wallet.ui.FingerprintInteractor
 import com.asfoundation.wallet.ui.wallets.WalletsInteract
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(FragmentComponent::class)
 @Module
 class SettingsModule {
 
@@ -50,5 +54,10 @@ class SettingsModule {
   @Provides
   fun providesSettingsNavigator(settingsFragment: SettingsFragment): SettingsNavigator {
     return SettingsNavigator(settingsFragment.requireFragmentManager(), settingsFragment.activity!!)
+  }
+
+  @Provides
+  fun providesFragment(fragment: Fragment): SettingsFragment {
+    return fragment as SettingsFragment
   }
 }

@@ -1,12 +1,16 @@
 package com.asfoundation.wallet.ui.settings.wallets.bottomsheet
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.WalletsEventSender
 import com.asfoundation.wallet.ui.settings.wallets.bottomsheet.SettingsWalletsBottomSheetFragment.Companion.WALLET_MODEL_KEY
 import com.asfoundation.wallet.ui.wallets.WalletsModel
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.disposables.CompositeDisposable
 
+@InstallIn(FragmentComponent::class)
 @Module
 class SettingsWalletsBottomSheetModule {
 
@@ -31,5 +35,10 @@ class SettingsWalletsBottomSheetModule {
   fun providesSettingsWalletsBottomSheetNavigator(
       fragment: SettingsWalletsBottomSheetFragment): SettingsWalletsBottomSheetNavigator {
     return SettingsWalletsBottomSheetNavigator(fragment.requireFragmentManager(), fragment)
+  }
+
+  @Provides
+  fun providesFragment(fragment: Fragment): SettingsWalletsBottomSheetFragment {
+    return fragment as SettingsWalletsBottomSheetFragment
   }
 }

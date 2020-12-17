@@ -1,13 +1,17 @@
 package com.asfoundation.wallet.billing.address
 
+import androidx.fragment.app.Fragment
 import com.asfoundation.wallet.billing.analytics.BillingAnalytics
 import com.asfoundation.wallet.ui.iab.IabActivity
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.math.BigDecimal
 
+@InstallIn(FragmentComponent::class)
 @Module
 class BillingAddressModule {
 
@@ -41,5 +45,10 @@ class BillingAddressModule {
           getBoolean(BillingAddressFragment.STORE_CARD_KEY),
           getBoolean(BillingAddressFragment.IS_STORED_KEY))
     }
+  }
+
+  @Provides
+  fun providesFragment(fragment: Fragment): BillingAddressFragment {
+    return fragment as BillingAddressFragment
   }
 }

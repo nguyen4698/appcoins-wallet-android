@@ -1,14 +1,19 @@
 package com.asfoundation.wallet.ui.splash
 
+import android.content.Context
 import com.asfoundation.wallet.fingerprint.FingerprintPreferencesRepositoryContract
 import com.asfoundation.wallet.interact.AutoUpdateInteract
 import com.asfoundation.wallet.repository.PreferencesRepositoryType
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+@InstallIn(ActivityComponent::class)
 @Module
 class SplashModule {
 
@@ -30,5 +35,10 @@ class SplashModule {
   @Provides
   fun providesSplashNavigator(activity: SplashActivity): SplashNavigator {
     return SplashNavigator(activity)
+  }
+
+  @Provides
+  fun providesActivity(@ActivityContext activity: Context): SplashActivity {
+    return activity as SplashActivity
   }
 }
