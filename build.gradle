@@ -36,7 +36,7 @@ allprojects {
   }
 }
 project.ext {
-  adyen_version = '3.6.6'
+  adyen_version = '3.8.0'
   appcompat_version = '1.2.0'
   aptoide_analytics_version = '1.0.3'
   asf_applications_version = '6'

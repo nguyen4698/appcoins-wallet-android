@@ -17,7 +17,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.Observer
 import com.adyen.checkout.adyen3ds2.Adyen3DS2Component
-import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
+import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
 import com.adyen.checkout.base.model.payments.response.Action
 import com.adyen.checkout.base.ui.view.RoundCornerImageView
 import com.adyen.checkout.card.CardComponent
@@ -157,7 +157,6 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
     setupAdyenLayouts()
     setupTransactionCompleteAnimation()
     handleBuyButtonText()
-    if (paymentType == PaymentType.CARD.name) setupCardConfiguration()
 
     handlePreSelectedView()
     handleBonusAnimation()
@@ -165,10 +164,11 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
     showProduct()
   }
 
-  override fun finishCardConfiguration(
-      paymentMethod: com.adyen.checkout.base.model.paymentmethods.PaymentMethod,
-      isStored: Boolean, forget: Boolean, savedInstance: Bundle?) {
+  override fun setupCardConfiguration(paymentMethod: PaymentMethod, isStored: Boolean,
+                                      forget: Boolean, shouldHideCvc: Boolean,
+                                      savedInstance: Bundle?) {
     this.isStored = isStored
+    buildCardConfiguration(shouldHideCvc)
     buy_button.visibility = VISIBLE
     cancel_button.visibility = VISIBLE
 
@@ -295,7 +295,6 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
     iabView.showBillingAddress(value, currency, bonus, appcAmount, this,
         adyenSaveDetailsSwitch?.isChecked ?: true, isStored)
   }
-
 
   override fun showSpecificError(@StringRes stringRes: Int) {
     fragment_credit_card_authorization_progress_bar?.visibility = GONE
@@ -435,12 +434,13 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
     adyenSecurityCodeLayout.minimumHeight = height
   }
 
-  private fun setupCardConfiguration() {
+  private fun buildCardConfiguration(shouldHideCvc: Boolean) {
     val cardConfigurationBuilder =
         CardConfiguration.Builder(activity as Context, BuildConfig.ADYEN_PUBLIC_KEY)
 
     cardConfiguration = cardConfigurationBuilder.let {
       it.setEnvironment(adyenEnvironment)
+      it.setHideCvcStoredCard(shouldHideCvc)
       it.build()
     }
   }
@@ -498,10 +498,8 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
 
   }
 
-  private fun prepareCardComponent(
-      paymentMethodEntity: com.adyen.checkout.base.model.paymentmethods.PaymentMethod,
-      forget: Boolean,
-      savedInstanceState: Bundle?) {
+  private fun prepareCardComponent(paymentMethodEntity: PaymentMethod, forget: Boolean,
+                                   savedInstanceState: Bundle?) {
     if (forget) viewModelStore.clear()
     val cardComponent = CardComponent.PROVIDER.get(this, paymentMethodEntity, cardConfiguration)
     if (forget) clearFields()
@@ -512,12 +510,9 @@ class AdyenPaymentFragment : DaggerFragment(), AdyenPaymentView {
         buy_button?.isEnabled = true
         view?.let { view -> KeyboardUtils.hideKeyboard(view) }
         it.data.paymentMethod?.let { paymentMethod ->
-          val hasCvc = !paymentMethod.encryptedSecurityCode.isNullOrEmpty()
-          val supportedShopperInteractions =
-              if (paymentMethodEntity is StoredPaymentMethod) paymentMethodEntity.supportedShopperInteractions else emptyList()
           paymentDataSubject?.onNext(
-              AdyenCardWrapper(paymentMethod, adyenSaveDetailsSwitch?.isChecked ?: false, hasCvc,
-                  supportedShopperInteractions))
+              AdyenCardWrapper(paymentMethod, adyenSaveDetailsSwitch?.isChecked ?: false,
+                  cardConfiguration.isHideCvcStoredCard))
         }
       } else {
         buy_button?.isEnabled = false

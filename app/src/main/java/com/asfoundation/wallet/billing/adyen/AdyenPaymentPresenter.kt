@@ -3,6 +3,7 @@ package com.asfoundation.wallet.billing.adyen
 import android.os.Bundle
 import androidx.annotation.StringRes
 import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
+import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
 import com.appcoins.wallet.billing.adyen.AdyenBillingAddress
 import com.appcoins.wallet.billing.adyen.AdyenPaymentRepository
 import com.appcoins.wallet.billing.adyen.AdyenResponseMapper.Companion.REDIRECT
@@ -105,7 +106,8 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
                   if (it.error.isNetworkError) view.showNetworkError()
                   else view.showGenericError()
                 } else {
-                  view.finishCardConfiguration(it.paymentMethodInfo!!, it.isStored, true, null)
+                  view.setupCardConfiguration(it.paymentMethodInfo!!, it.isStored, true,
+                      shouldHideCvc(it.paymentMethodInfo!!), null)
                 }
               }
         }
@@ -133,8 +135,8 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
                 if (paymentType == PaymentType.CARD.name) {
                   view.hideLoadingAndShowView()
                   sendPaymentMethodDetailsEvent(BillingAnalytics.PAYMENT_METHOD_CC)
-                  view.finishCardConfiguration(it.paymentMethodInfo!!, it.isStored, false,
-                      savedInstanceState)
+                  view.setupCardConfiguration(it.paymentMethodInfo!!, it.isStored, false,
+                      shouldHideCvc(it.paymentMethodInfo!!), savedInstanceState)
                   handleBuyClick(it.priceAmount, it.priceCurrency)
                 } else if (paymentType == PaymentType.PAYPAL.name) {
                   launchPaypal(it.paymentMethodInfo!!, it.priceAmount, it.priceCurrency)
@@ -150,7 +152,7 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
   private fun launchPaypal(paymentMethodInfo: PaymentMethod, priceAmount: BigDecimal,
                            priceCurrency: String) {
     disposables.add(transactionBuilder.flatMap {
-      adyenPaymentInteractor.makePayment(paymentMethodInfo, false, false, emptyList(), returnUrl,
+      adyenPaymentInteractor.makePayment(paymentMethodInfo, false, false, returnUrl,
           priceAmount.toString(), priceCurrency, it.orderReference,
           mapPaymentToService(paymentType).transactionType, origin, domain, it.payload,
           it.skuId, it.callbackUrl, it.type, it.toAddress())
@@ -198,9 +200,9 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
                 handleBuyAnalytics(it)
                 val billingAddressModel = view.retrieveBillingAddressData()
                 val shouldStore = billingAddressModel?.remember ?: adyenCard.shouldStoreCard
-                adyenPaymentInteractor.makePayment(adyenCard.cardPaymentMethod,
-                    shouldStore, adyenCard.hasCvc, adyenCard.supportedShopperInteractions,
-                    returnUrl, priceAmount.toString(), priceCurrency, it.orderReference,
+                adyenPaymentInteractor.makePayment(adyenCard.cardPaymentMethod, shouldStore,
+                    adyenCard.isCvcHidden, returnUrl,
+                    priceAmount.toString(), priceCurrency, it.orderReference,
                     mapPaymentToService(paymentType).transactionType, origin, domain,
                     it.payload, it.skuId, it.callbackUrl, it.type, it.toAddress(),
                     mapToAdyenBillingAddress(billingAddressModel))
@@ -619,6 +621,12 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
         view.showGenericError()
       }
     }
+  }
+
+  private fun shouldHideCvc(paymentMethod: PaymentMethod): Boolean {
+    val supportedShopperInteractions =
+        if (paymentMethod is StoredPaymentMethod) paymentMethod.supportedShopperInteractions else emptyList()
+    return supportedShopperInteractions.contains("ContAuth")
   }
 
   fun stop() = disposables.clear()

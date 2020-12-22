@@ -27,8 +27,8 @@ interface AdyenTopUpView {
 
   fun setFinishingPurchase()
 
-  fun finishCardConfiguration(paymentMethod: PaymentMethod, isStored: Boolean, forget: Boolean,
-                              savedInstanceState: Bundle?)
+  fun setupCardConfiguration(paymentMethod: PaymentMethod, isStored: Boolean, forget: Boolean,
+                             shouldHideCvc: Boolean, savedInstanceState: Bundle?)
 
   fun setupRedirectComponent()
 

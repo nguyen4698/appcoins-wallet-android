@@ -19,17 +19,14 @@ class AdyenPaymentRepository(private val adyenApi: AdyenApi,
         .onErrorReturn { adyenResponseMapper.mapInfoModelError(it) }
   }
 
-  fun makePayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean, hasCvc: Boolean,
-                  supportedShopperInteractions: List<String>, returnUrl: String, value: String,
-                  currency: String, reference: String?, paymentType: String, walletAddress: String,
-                  origin: String?, packageName: String?, metadata: String?, sku: String?,
-                  callbackUrl: String?, transactionType: String, developerWallet: String?,
-                  storeWallet: String?, oemWallet: String?, userWallet: String?,
-                  walletSignature: String,
+  fun makePayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean,
+                  isCvcHidden: Boolean, returnUrl: String, value: String, currency: String,
+                  reference: String?, paymentType: String, walletAddress: String, origin: String?,
+                  packageName: String?, metadata: String?, sku: String?, callbackUrl: String?,
+                  transactionType: String, developerWallet: String?, storeWallet: String?,
+                  oemWallet: String?, userWallet: String?, walletSignature: String,
                   billingAddress: AdyenBillingAddress?): Single<PaymentModel> {
-    val shopperInteraction = if (!hasCvc && supportedShopperInteractions.contains("ContAuth")) {
-      "ContAuth"
-    } else "Ecommerce"
+    val shopperInteraction = if (isCvcHidden) "ContAuth" else "Ecommerce"
     return adyenApi.makePayment(walletAddress, walletSignature,
         Payment(adyenPaymentMethod, shouldStoreMethod, returnUrl, shopperInteraction,
             billingAddress, callbackUrl, packageName, metadata, paymentType, origin, sku, reference,

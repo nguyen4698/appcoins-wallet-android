@@ -3,6 +3,7 @@ package com.asfoundation.wallet.billing.adyen
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.StringRes
+import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
 import com.adyen.checkout.base.model.payments.response.Action
 import com.asfoundation.wallet.billing.address.BillingAddressModel
 import io.reactivex.Observable
@@ -37,9 +38,8 @@ interface AdyenPaymentView {
 
   fun hideLoadingAndShowView()
 
-  fun finishCardConfiguration(
-      paymentMethod: com.adyen.checkout.base.model.paymentmethods.PaymentMethod, isStored: Boolean,
-      forget: Boolean, savedInstance: Bundle?)
+  fun setupCardConfiguration(paymentMethod: PaymentMethod, isStored: Boolean,
+                             forget: Boolean, shouldHideCvc: Boolean, savedInstance: Bundle?)
 
   fun retrievePaymentData(): ReplaySubject<AdyenCardWrapper>
 

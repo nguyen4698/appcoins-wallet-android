@@ -14,7 +14,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import com.adyen.checkout.adyen3ds2.Adyen3DS2Component
-import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
+import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
 import com.adyen.checkout.base.model.payments.response.Action
 import com.adyen.checkout.base.ui.view.RoundCornerImageView
 import com.adyen.checkout.card.CardComponent
@@ -289,10 +289,12 @@ class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
         adyenSaveDetailsSwitch?.isChecked ?: true, isStored)
   }
 
-  override fun finishCardConfiguration(
-      paymentMethod: com.adyen.checkout.base.model.paymentmethods.PaymentMethod,
-      isStored: Boolean, forget: Boolean, savedInstanceState: Bundle?) {
+  override fun setupCardConfiguration(paymentMethod: PaymentMethod,
+                                      isStored: Boolean, forget: Boolean,
+                                      shouldHideCvc: Boolean,
+                                      savedInstanceState: Bundle?) {
     this.isStored = isStored
+    buildCardConfiguration(shouldHideCvc)
     handleLayoutVisibility(isStored)
     prepareCardComponent(paymentMethod, forget, savedInstanceState)
     setStoredPaymentInformation(isStored)
@@ -301,7 +303,7 @@ class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
   override fun lockRotation() = topUpView.lockOrientation()
 
   private fun prepareCardComponent(
-      paymentMethodEntity: com.adyen.checkout.base.model.paymentmethods.PaymentMethod,
+      paymentMethodEntity: PaymentMethod,
       forget: Boolean,
       savedInstanceState: Bundle?) {
     if (forget) viewModelStore.clear()
@@ -314,12 +316,9 @@ class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
         button.isEnabled = true
         view?.let { view -> KeyboardUtils.hideKeyboard(view) }
         it.data.paymentMethod?.let { paymentMethod ->
-          val hasCvc = !paymentMethod.encryptedSecurityCode.isNullOrEmpty()
-          val supportedShopperInteractions =
-              if (paymentMethodEntity is StoredPaymentMethod) paymentMethodEntity.supportedShopperInteractions else emptyList()
           paymentDataSubject?.onNext(
-              AdyenCardWrapper(paymentMethod, adyenSaveDetailsSwitch?.isChecked ?: false, hasCvc,
-                  supportedShopperInteractions))
+              AdyenCardWrapper(paymentMethod, adyenSaveDetailsSwitch?.isChecked ?: false,
+                  cardConfiguration.isHideCvcStoredCard))
         }
       } else {
         button.isEnabled = false
@@ -433,9 +432,7 @@ class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
 
     if (paymentType == PaymentType.CARD.name) {
       button.setText(R.string.topup_home_button)
-
       setupAdyenLayouts()
-      setupCardConfiguration()
     }
 
     topUpView.showToolbar()
@@ -443,12 +440,13 @@ class AdyenTopUpFragment : DaggerFragment(), AdyenTopUpView {
     button.visibility = VISIBLE
   }
 
-  private fun setupCardConfiguration() {
+  private fun buildCardConfiguration(shouldHideCvc: Boolean) {
     val cardConfigurationBuilder =
         CardConfiguration.Builder(activity as Context, BuildConfig.ADYEN_PUBLIC_KEY)
 
     cardConfiguration = cardConfigurationBuilder.let {
       it.setEnvironment(adyenEnvironment)
+      it.setHideCvcStoredCard(shouldHideCvc)
       it.build()
     }
   }

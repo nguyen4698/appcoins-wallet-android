@@ -56,11 +56,10 @@ class AdyenPaymentInteractor(
         .flatMap { adyenPaymentRepository.loadPaymentInfo(methods, value, currency, it) }
   }
 
-  fun makePayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean, hasCvc: Boolean,
-                  supportedShopperInteraction: List<String>,
-                  returnUrl: String, value: String, currency: String, reference: String?,
-                  paymentType: String, origin: String?, packageName: String, metadata: String?,
-                  sku: String?, callbackUrl: String?, transactionType: String,
+  fun makePayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean,
+                  isCvcHidden: Boolean, returnUrl: String, value: String, currency: String,
+                  reference: String?, paymentType: String, origin: String?, packageName: String,
+                  metadata: String?, sku: String?, callbackUrl: String?, transactionType: String,
                   developerWallet: String?,
                   billingAddress: AdyenBillingAddress? = null): Single<PaymentModel> {
     return walletService.getAndSignCurrentWalletAddress()
@@ -72,8 +71,8 @@ class AdyenPaymentInteractor(
                 Pair(storeAddress, oemAddress)
               })
               .flatMap {
-                adyenPaymentRepository.makePayment(adyenPaymentMethod, shouldStoreMethod, hasCvc,
-                    supportedShopperInteraction, returnUrl, value, currency, reference, paymentType,
+                adyenPaymentRepository.makePayment(adyenPaymentMethod, shouldStoreMethod,
+                    isCvcHidden, returnUrl, value, currency, reference, paymentType,
                     address.address, origin, packageName, metadata, sku, callbackUrl,
                     transactionType, developerWallet, it.first, it.second, address.address,
                     address.signedAddress, billingAddress)
@@ -81,16 +80,15 @@ class AdyenPaymentInteractor(
         }
   }
 
-  fun makeTopUpPayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean, hasCvc: Boolean,
-                       supportedShopperInteraction: List<String>, returnUrl: String, value: String,
-                       currency: String, paymentType: String, transactionType: String,
-                       packageName: String,
+  fun makeTopUpPayment(adyenPaymentMethod: ModelObject, shouldStoreMethod: Boolean,
+                       isCvcHidden: Boolean, returnUrl: String, value: String, currency: String,
+                       paymentType: String, transactionType: String, packageName: String,
                        billingAddress: AdyenBillingAddress? = null): Single<PaymentModel> {
     return walletService.getAndSignCurrentWalletAddress()
         .flatMap {
-          adyenPaymentRepository.makePayment(adyenPaymentMethod, shouldStoreMethod, hasCvc,
-              supportedShopperInteraction, returnUrl, value, currency, null, paymentType,
-              it.address, null, packageName, null, null, null, transactionType, null, null, null,
+          adyenPaymentRepository.makePayment(adyenPaymentMethod, shouldStoreMethod, isCvcHidden,
+              returnUrl, value, currency, null, paymentType, it.address, null, packageName, null,
+              null, null, transactionType, null, null, null,
               null, it.signedAddress, billingAddress)
         }
   }

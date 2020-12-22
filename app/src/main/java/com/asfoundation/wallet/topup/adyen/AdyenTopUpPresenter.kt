@@ -3,6 +3,7 @@ package com.asfoundation.wallet.topup.adyen
 import android.os.Bundle
 import androidx.annotation.StringRes
 import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
+import com.adyen.checkout.base.model.paymentmethods.StoredPaymentMethod
 import com.appcoins.wallet.billing.BillingMessagesMapper
 import com.appcoins.wallet.billing.adyen.AdyenBillingAddress
 import com.appcoins.wallet.billing.adyen.AdyenPaymentRepository
@@ -155,8 +156,8 @@ class AdyenTopUpPresenter(private val view: AdyenTopUpView,
             retrievedAmount = it.priceAmount.toString()
             retrievedCurrency = it.priceCurrency
             if (paymentType == PaymentType.CARD.name) {
-              view.finishCardConfiguration(it.paymentMethodInfo!!, it.isStored, false,
-                  savedInstanceState)
+              view.setupCardConfiguration(it.paymentMethodInfo!!, it.isStored, false,
+                  shouldHideCvc(it.paymentMethodInfo!!), savedInstanceState)
               handleTopUpClick()
             } else if (paymentType == PaymentType.PAYPAL.name) {
               launchPaypal(it.paymentMethodInfo!!)
@@ -169,7 +170,7 @@ class AdyenTopUpPresenter(private val view: AdyenTopUpView,
 
   private fun launchPaypal(paymentMethodInfo: PaymentMethod) {
     disposables.add(
-        adyenPaymentInteractor.makeTopUpPayment(paymentMethodInfo, false, false, emptyList(),
+        adyenPaymentInteractor.makeTopUpPayment(paymentMethodInfo, false, false,
             returnUrl, retrievedAmount, retrievedCurrency,
             mapPaymentToService(paymentType).transactionType, transactionType, appPackage)
             .subscribeOn(networkScheduler)
@@ -197,9 +198,8 @@ class AdyenTopUpPresenter(private val view: AdyenTopUpView,
           val shouldStore = billingAddressModel?.remember ?: it.shouldStoreCard
           topUpAnalytics.sendConfirmationEvent(appcValue.toDouble(), "top_up", paymentType)
           adyenPaymentInteractor.makeTopUpPayment(it.cardPaymentMethod, shouldStore,
-              it.hasCvc, it.supportedShopperInteractions, returnUrl, retrievedAmount,
-              retrievedCurrency, mapPaymentToService(paymentType).transactionType,
-              transactionType,
+              it.isCvcHidden, returnUrl, retrievedAmount, retrievedCurrency,
+              mapPaymentToService(paymentType).transactionType, transactionType,
               appPackage, mapToAdyenBillingAddress(billingAddressModel))
         }
         .observeOn(viewScheduler)
@@ -243,7 +243,8 @@ class AdyenTopUpPresenter(private val view: AdyenTopUpView,
                         logMessage = "Message: ${it.error.message}, code: ${it.error.code}")
                   }
                 } else {
-                  view.finishCardConfiguration(it.paymentMethodInfo!!, it.isStored, true, null)
+                  view.setupCardConfiguration(it.paymentMethodInfo!!, it.isStored, true,
+                      shouldHideCvc(it.paymentMethodInfo!!), null)
                 }
               }
         }
@@ -523,6 +524,12 @@ class AdyenTopUpPresenter(private val view: AdyenTopUpView,
         handleSpecificError(R.string.unknown_error)
       }
     }
+  }
+
+  private fun shouldHideCvc(paymentMethod: PaymentMethod): Boolean {
+    val supportedShopperInteractions =
+        if (paymentMethod is StoredPaymentMethod) paymentMethod.supportedShopperInteractions else emptyList()
+    return supportedShopperInteractions.contains("ContAuth")
   }
 
   companion object {
