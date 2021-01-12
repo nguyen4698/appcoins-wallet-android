@@ -43,7 +43,7 @@ class BackupCreationModule {
 
   @Provides
   fun providesBackupCreationData(fragment: BackupCreationFragment): BackupCreationData {
-    fragment.arguments!!.apply {
+    fragment.requireArguments().apply {
       return BackupCreationData(getString(WALLET_ADDRESS_KEY)!!, getString(PASSWORD_KEY)!!)
     }
   }

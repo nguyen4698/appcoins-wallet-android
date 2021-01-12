@@ -27,7 +27,4 @@ class SendModule {
 
   @Provides
   fun provideConfirmationRouter() = TransferConfirmationRouter(PublishSubject.create())
-
-  @Provides
-  fun provideTransactionsRouter() = TransactionsRouter()
 }

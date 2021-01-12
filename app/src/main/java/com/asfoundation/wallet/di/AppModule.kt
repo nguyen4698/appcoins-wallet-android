@@ -62,7 +62,6 @@ import com.asfoundation.wallet.router.ExternalBrowserRouter
 import com.asfoundation.wallet.router.GasSettingsRouter
 import com.asfoundation.wallet.router.TransactionDetailRouter
 import com.asfoundation.wallet.router.TransactionsRouter
-import com.asfoundation.wallet.service.AutoUpdateService.AutoUpdateApi
 import com.asfoundation.wallet.service.CampaignService
 import com.asfoundation.wallet.service.ServicesErrorCodeMapper
 import com.asfoundation.wallet.service.TokenRateService
@@ -142,7 +141,7 @@ internal class AppModule {
   @Singleton
   @Provides
   @Named("low-timer")
-  fun provideLowTimerOkHttpClient(context: Context,
+  fun provideLowTimerOkHttpClient(@ApplicationContext context: Context,
                                   preferencesRepositoryType: PreferencesRepositoryType): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(UserAgentInterceptor(context, preferencesRepositoryType))
@@ -589,7 +588,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesAbTestDatabase(context: Context): ABTestDatabase {
+  fun providesAbTestDatabase(@ApplicationContext context: Context): ABTestDatabase {
     return Room.databaseBuilder(context, ABTestDatabase::class.java, "abtest_database")
         .build()
   }
@@ -610,7 +609,7 @@ internal class AppModule {
 
   @Singleton
   @Provides
-  fun providesSecureSharedPreferences(context: Context): SecureSharedPreferences {
+  fun providesSecureSharedPreferences(@ApplicationContext context: Context): SecureSharedPreferences {
     return SecureSharedPreferences(context)
   }
 }
