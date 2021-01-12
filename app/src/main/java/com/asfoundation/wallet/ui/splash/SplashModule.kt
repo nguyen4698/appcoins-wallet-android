@@ -1,6 +1,7 @@
 package com.asfoundation.wallet.ui.splash
 
 import android.content.Context
+import com.asfoundation.wallet.abtesting.experiments.balancewallets.BalanceWalletsExperiment
 import com.asfoundation.wallet.fingerprint.FingerprintPreferencesRepositoryContract
 import com.asfoundation.wallet.interact.AutoUpdateInteract
 import com.asfoundation.wallet.repository.PreferencesRepositoryType
@@ -27,9 +28,10 @@ class SplashModule {
   @Provides
   fun providesSplashInteractor(autoUpdateInteract: AutoUpdateInteract,
                                fingerprintPreferencesRepositoryContract: FingerprintPreferencesRepositoryContract,
-                               preferencesRepositoryType: PreferencesRepositoryType): SplashInteractor {
-    return SplashInteractor(autoUpdateInteract, fingerprintPreferencesRepositoryContract,
-        preferencesRepositoryType)
+                               preferencesRepositoryType: PreferencesRepositoryType,
+                               balanceWalletsExperiment: BalanceWalletsExperiment): SplashInteractor {
+    return SplashInteractor(autoUpdateInteract, balanceWalletsExperiment,
+        fingerprintPreferencesRepositoryContract, preferencesRepositoryType)
   }
 
   @Provides

@@ -74,18 +74,25 @@ class BillingAddressTopUpFragment : Fragment(R.layout.fragment_billing_address_t
     presenter.present()
   }
 
-  override fun initializeView(data: TopUpPaymentData, fiatAmount: String, fiatCurrency: String,
-                              shouldStoreCard: Boolean, isStored: Boolean) {
+  override fun initializeView(data: TopUpPaymentData,
+                              fiatAmount: String, fiatCurrency: String,
+                              shouldStoreCard: Boolean, isStored: Boolean,
+                              savedBillingAddress: BillingAddressModel?) {
     showBonus(data)
     showValues(data, fiatAmount, fiatCurrency)
+    savedBillingAddress?.let { setupSavedBillingAddress(savedBillingAddress) }
     setupFieldsListener()
     setupStateAdapter()
     button.setText(R.string.topup_home_button)
-    if (isStored) remember.visibility = View.GONE
-    else {
-      remember.visibility = VISIBLE
-      remember.isChecked = shouldStoreCard
-    }
+  }
+
+  private fun setupSavedBillingAddress(savedBillingAddress: BillingAddressModel) {
+    address.setText(savedBillingAddress.address)
+    city.setText(savedBillingAddress.city)
+    zipcode.setText(savedBillingAddress.zipcode)
+    state.setText(savedBillingAddress.state)
+    country.setText(savedBillingAddress.country)
+    number.setText(savedBillingAddress.number)
   }
 
   private fun setupFieldsListener() {
@@ -119,7 +126,7 @@ class BillingAddressTopUpFragment : Fragment(R.layout.fragment_billing_address_t
               state.text.toString(),
               country.text.toString(),
               number.text.toString(),
-              remember.isChecked
+              false
           )
         }
   }

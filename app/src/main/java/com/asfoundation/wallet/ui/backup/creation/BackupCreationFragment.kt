@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -55,6 +54,7 @@ class BackupCreationFragment : BackupCreationView, Fragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    setHasOptionsMenu(true)
     onWritePermissionGivenSubject = PublishSubject.create()
   }
 
@@ -62,13 +62,6 @@ class BackupCreationFragment : BackupCreationView, Fragment() {
     super.onAttach(context)
     check(context is BackupActivityView) { "Backup fragment must be attached to Backup activity" }
     activityView = context
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
-      android.R.id.home -> presenter.sendWalletSaveFileCanceledEvent()
-    }
-    return super.onOptionsItemSelected(item)
   }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

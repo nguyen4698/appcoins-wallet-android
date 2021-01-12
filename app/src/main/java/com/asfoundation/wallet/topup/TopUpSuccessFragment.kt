@@ -105,7 +105,7 @@ class TopUpSuccessFragment : Fragment(R.layout.fragment_top_up_success), TopUpSu
   }
 
   override fun show() {
-    if (bonus.isNotEmpty()) {
+    if (bonus.isNotEmpty() && bonus != "0") {
       top_up_success_animation.setAnimation(R.raw.top_up_bonus_success_animation)
       setAnimationText()
       formatBonusSuccessMessage()

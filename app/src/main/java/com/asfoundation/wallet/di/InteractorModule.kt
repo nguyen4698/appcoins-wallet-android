@@ -19,17 +19,23 @@ import com.appcoins.wallet.billing.carrierbilling.CarrierBillingRepository
 import com.appcoins.wallet.commons.MemoryCache
 import com.appcoins.wallet.gamification.Gamification
 import com.appcoins.wallet.gamification.repository.PromotionsRepository
+import com.appcoins.wallet.gamification.repository.UserStatsLocalData
 import com.appcoins.wallet.permissions.Permissions
 import com.asf.wallet.BuildConfig
 import com.asfoundation.wallet.Airdrop
 import com.asfoundation.wallet.AirdropService
+import com.asfoundation.wallet.abtesting.ABTestInteractor
+import com.asfoundation.wallet.abtesting.ABTestRepository
+import com.asfoundation.wallet.abtesting.experiments.balancewallets.BalanceWalletsExperiment
 import com.asfoundation.wallet.advertise.AdvertisingThrowableCodeMapper
 import com.asfoundation.wallet.advertise.CampaignInteract
 import com.asfoundation.wallet.analytics.LaunchAnalytics
 import com.asfoundation.wallet.analytics.LaunchInteractor
+import com.asfoundation.wallet.analytics.RakamAnalytics
 import com.asfoundation.wallet.backup.BackupInteract
 import com.asfoundation.wallet.backup.BackupInteractContract
 import com.asfoundation.wallet.backup.FileInteractor
+import com.asfoundation.wallet.billing.address.BillingAddressRepository
 import com.asfoundation.wallet.billing.adyen.AdyenPaymentInteractor
 import com.asfoundation.wallet.billing.partners.AddressService
 import com.asfoundation.wallet.billing.purchase.InAppDeepLinkRepository
@@ -41,7 +47,6 @@ import com.asfoundation.wallet.interact.*
 import com.asfoundation.wallet.logging.Logger
 import com.asfoundation.wallet.permissions.PermissionsInteractor
 import com.asfoundation.wallet.promotions.PromotionsInteractor
-import com.asfoundation.wallet.promotions.PromotionsInteractorContract
 import com.asfoundation.wallet.referrals.ReferralInteractor
 import com.asfoundation.wallet.referrals.ReferralInteractorContract
 import com.asfoundation.wallet.referrals.SharedPreferencesReferralLocalData
@@ -246,10 +251,12 @@ class InteractorModule {
                                     walletService: WalletService,
                                     supportInteractor: SupportInteractor,
                                     walletBlockedInteract: WalletBlockedInteract,
-                                    smsValidationInteract: SmsValidationInteract): AdyenPaymentInteractor {
+                                    smsValidationInteract: SmsValidationInteract,
+                                    billingAddressRepository: BillingAddressRepository): AdyenPaymentInteractor {
     return AdyenPaymentInteractor(adyenPaymentRepository, inAppPurchaseInteractor,
         inAppPurchaseInteractor.billingMessagesMapper, partnerAddressService, billing,
-        walletService, supportInteractor, walletBlockedInteract, smsValidationInteract)
+        walletService, supportInteractor, walletBlockedInteract, smsValidationInteract,
+        billingAddressRepository)
   }
 
   @Provides
@@ -268,9 +275,12 @@ class InteractorModule {
                                   gamificationInteractor: GamificationInteractor,
                                   promotionsRepository: PromotionsRepository,
                                   findDefaultWalletInteract: FindDefaultWalletInteract,
-                                  gamificationMapper: GamificationMapper): PromotionsInteractorContract {
+                                  rakamAnalytics: RakamAnalytics,
+                                  userStatsLocalData: UserStatsLocalData,
+                                  gamificationMapper: GamificationMapper): PromotionsInteractor {
     return PromotionsInteractor(referralInteractor, gamificationInteractor,
-        promotionsRepository, findDefaultWalletInteract, gamificationMapper)
+        promotionsRepository, findDefaultWalletInteract, userStatsLocalData, rakamAnalytics,
+        gamificationMapper)
   }
 
   @Provides
@@ -311,9 +321,10 @@ class InteractorModule {
   fun provideBalanceInteract(findDefaultWalletInteract: FindDefaultWalletInteract,
                              balanceRepository: BalanceRepository,
                              preferencesRepositoryType: PreferencesRepositoryType,
+                             backupRestorePreferencesRepository: BackupRestorePreferencesRepository,
                              smsValidationInteract: SmsValidationInteract) =
       BalanceInteractor(findDefaultWalletInteract, balanceRepository,
-          preferencesRepositoryType, smsValidationInteract)
+          preferencesRepositoryType, backupRestorePreferencesRepository, smsValidationInteract)
 
   @Provides
   fun provideAutoUpdateInteract(autoUpdateRepository: AutoUpdateRepository,
@@ -327,8 +338,8 @@ class InteractorModule {
   @Singleton
   @Provides
   fun provideFileInteract(@ApplicationContext context: Context, contentResolver: ContentResolver,
-                          preferencesRepositoryType: PreferencesRepositoryType) =
-      FileInteractor(context, contentResolver, preferencesRepositoryType)
+                          backupRestorePreferencesRepository: BackupRestorePreferencesRepository) =
+      FileInteractor(context, contentResolver, backupRestorePreferencesRepository)
 
   @Provides
   fun providePaymentMethodsInteractor(supportInteractor: SupportInteractor,
@@ -397,18 +408,19 @@ class InteractorModule {
                                       fetchTransactionsInteract: FetchTransactionsInteract,
                                       gamificationInteractor: GamificationInteractor,
                                       balanceInteractor: BalanceInteractor,
-                                      promotionsInteractorContract: PromotionsInteractorContract,
+                                      promotionsInteractor: PromotionsInteractor,
                                       cardNotificationsInteractor: CardNotificationsInteractor,
                                       autoUpdateInteract: AutoUpdateInteract,
                                       preferencesRepositoryType: PreferencesRepositoryType,
                                       packageManager: PackageManager,
                                       fingerprintInteractor: FingerprintInteractor,
-                                      fingerprintPreferencesRepository: FingerprintPreferencesRepositoryContract): TransactionViewInteract {
+                                      fingerprintPreferencesRepository: FingerprintPreferencesRepositoryContract,
+                                      balanceWalletsExperiment: BalanceWalletsExperiment): TransactionViewInteract {
     return TransactionViewInteract(findDefaultNetworkInteract, findDefaultWalletInteract,
         fetchTransactionsInteract, gamificationInteractor, balanceInteractor,
-        promotionsInteractorContract, cardNotificationsInteractor, autoUpdateInteract,
+        promotionsInteractor, cardNotificationsInteractor, autoUpdateInteract,
         preferencesRepositoryType, packageManager, fingerprintInteractor,
-        fingerprintPreferencesRepository)
+        fingerprintPreferencesRepository, balanceWalletsExperiment)
   }
 
   @Provides
@@ -419,21 +431,23 @@ class InteractorModule {
 
   @Provides
   fun provideBackupInteractor(sharedPreferences: PreferencesRepositoryType,
+                              backupRestorePreferencesRepository: BackupRestorePreferencesRepository,
                               gamificationInteractor: GamificationInteractor,
                               fetchTransactionsInteract: FetchTransactionsInteract,
                               balanceInteractor: BalanceInteractor,
                               findDefaultWalletInteract: FindDefaultWalletInteract): BackupInteractContract {
-    return BackupInteract(sharedPreferences, fetchTransactionsInteract, balanceInteractor,
-        gamificationInteractor, findDefaultWalletInteract)
+    return BackupInteract(sharedPreferences, backupRestorePreferencesRepository,
+        fetchTransactionsInteract, balanceInteractor, gamificationInteractor,
+        findDefaultWalletInteract)
   }
 
   @Provides
   fun provideCardNotificationInteractor(referralInteractor: ReferralInteractorContract,
                                         autoUpdateInteract: AutoUpdateInteract,
                                         backupInteract: BackupInteractContract,
-                                        promotionsInteractorContract: PromotionsInteractorContract): CardNotificationsInteractor {
+                                        promotionsInteractor: PromotionsInteractor): CardNotificationsInteractor {
     return CardNotificationsInteractor(referralInteractor, autoUpdateInteract,
-        backupInteract, promotionsInteractorContract)
+        backupInteract, promotionsInteractor, Schedulers.io())
   }
 
   @Singleton
@@ -453,9 +467,10 @@ class InteractorModule {
   @Provides
   fun provideDeleteAccountInteract(accountRepository: WalletRepositoryType, store: PasswordStore,
                                    preferencesRepositoryType: PreferencesRepositoryType,
+                                   backupRestorePreferencesRepository: BackupRestorePreferencesRepository,
                                    fingerprintPreferencesRepository: FingerprintPreferencesRepositoryContract): DeleteWalletInteract {
     return DeleteWalletInteract(accountRepository, store, preferencesRepositoryType,
-        fingerprintPreferencesRepository)
+        backupRestorePreferencesRepository, fingerprintPreferencesRepository)
   }
 
   @Provides
@@ -493,11 +508,11 @@ class InteractorModule {
   @Provides
   fun provideRestoreWalletInteract(
       walletRepository: WalletRepositoryType, passwordStore: PasswordStore,
-      preferencesRepositoryType: PreferencesRepositoryType,
+      backupRestorePreferencesRepository: BackupRestorePreferencesRepository,
       setDefaultWalletInteractor: SetDefaultWalletInteractor,
       fileInteractor: FileInteractor): RestoreWalletInteractor {
     return RestoreWalletInteractor(walletRepository, setDefaultWalletInteractor,
-        passwordStore, preferencesRepositoryType, fileInteractor)
+        passwordStore, backupRestorePreferencesRepository, fileInteractor)
   }
 
   @Provides
@@ -541,4 +556,9 @@ class InteractorModule {
         AndroidSchedulers.mainThread(), Schedulers.io())
   }
 
+  @Singleton
+  @Provides
+  fun providesABTestInteractor(abTestRepository: ABTestRepository): ABTestInteractor {
+    return ABTestInteractor(abTestRepository)
+  }
 }
