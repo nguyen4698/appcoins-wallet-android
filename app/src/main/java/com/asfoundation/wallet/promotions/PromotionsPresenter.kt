@@ -53,8 +53,12 @@ class PromotionsPresenter(private val view: PromotionsView,
         view.showNetworkErrorView()
       }
       promotionsModel.walletOrigin == WalletOrigin.UNKNOWN -> {
-        viewState = ViewState.UNKNOWN
-        view.showLockedPromotionsScreen()
+        viewState = ViewState.UNKNOWN_USER
+        if (promotionsModel.vouchers.isNotEmpty()) {
+          view.showLockedPromotionsWithVouchers(promotionsModel.vouchers)
+        } else {
+          view.showLockedPromotionsScreen()
+        }
       }
       else -> {
         if (hasPromotions(promotionsModel)) {
@@ -195,10 +199,10 @@ class PromotionsPresenter(private val view: PromotionsView,
   }
 
   private fun shouldRequestPromotions(): Boolean {
-    return viewState == ViewState.DEFAULT || viewState == ViewState.UNKNOWN
+    return viewState == ViewState.DEFAULT || viewState == ViewState.UNKNOWN_USER
   }
 
   enum class ViewState {
-    DEFAULT, UNKNOWN, NO_NETWORK, PROMOTIONS, NO_PROMOTIONS
+    DEFAULT, UNKNOWN_USER, NO_NETWORK, PROMOTIONS, NO_PROMOTIONS
   }
 }

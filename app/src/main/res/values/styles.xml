@@ -780,7 +780,7 @@
   <style name="Promotions.CardView" parent="Widget.MaterialComponents.CardView">
     <item name="cardBackgroundColor">@color/white</item>
     <item name="cardCornerRadius">6dp</item>
-    <item name="cardElevation">4dp</item>
+    <item name="cardElevation">1dp</item>
     <item name="cardUseCompatPadding">true</item>
   </style>
 
@@ -1237,5 +1237,17 @@
     <item name="autoSizeMaxTextSize">12sp</item>
     <item name="autoSizeMinTextSize">9sp</item>
     <item name="autoSizeTextType">uniform</item>
+  </style>
+
+  <style name="VouchersListTitle" parent="TextAppearance.AppCompat.Body1.Roboto.Medium">
+    <item name="android:textSize">14sp</item>
+    <item name="android:letterSpacing">0.01</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/black</item>
+  </style>
+
+  <style name="VouchersListSubTitle" parent="TextAppearance.AppCompat.Body1.Roboto.Regular">
+    <item name="android:textSize">12sp</item>
+    <item name="android:textColor">@color/vouchers_subtitle</item>
   </style>
 </resources>
