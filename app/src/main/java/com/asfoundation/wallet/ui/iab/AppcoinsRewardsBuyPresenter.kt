@@ -57,7 +57,8 @@ class AppcoinsRewardsBuyPresenter(private val view: AppcoinsRewardsBuyView,
   private fun handleBuyClick() {
     disposables.add(transferParser.parse(uri)
         .flatMapCompletable { transaction: TransactionBuilder ->
-          rewardsManager.pay(transaction.skuId, amount, transaction.toAddress(), packageName,
+          rewardsManager.pay(transaction.skuId, transaction.amount(), transaction.toAddress(),
+              packageName,
               getOrigin(isBds, transaction), transaction.type, transaction.payload,
               transaction.callbackUrl, transaction.orderReference, transaction.referrerUrl)
               .andThen(rewardsManager.getPaymentStatus(packageName, transaction.skuId,
@@ -91,6 +92,7 @@ class AppcoinsRewardsBuyPresenter(private val view: AppcoinsRewardsBuyView,
         if (isBds && transactionBuilder.type.equals(TransactionData.TransactionType.INAPP.name,
                 ignoreCase = true)) {
           rewardsManager.getPaymentCompleted(packageName, sku)
+              .subscribeOn(networkScheduler)
               .flatMapCompletable { purchase ->
                 Completable.fromAction { view.showTransactionCompleted() }
                     .subscribeOn(viewScheduler)
@@ -111,13 +113,7 @@ class AppcoinsRewardsBuyPresenter(private val view: AppcoinsRewardsBuyView,
               }
         } else if (transactionBuilder.type.equals(TransactionData.TransactionType.VOUCHER.name,
                 ignoreCase = true)) {
-          rewardsManager.getTransaction(packageName, sku, amount)
-              .flatMapCompletable {
-                Completable.fromAction {
-                  //TODO Replace with value from API
-                  view.navigateToVouchersSuccess("code", "link")
-                }
-              }
+          handleVoucherSuccessTransaction(transaction)
         } else {
           rewardsManager.getTransaction(packageName, sku, amount)
               .firstOrError()
@@ -142,6 +138,22 @@ class AppcoinsRewardsBuyPresenter(private val view: AppcoinsRewardsBuyView,
         view.hideLoading()
       }
     }
+  }
+
+  private fun handleVoucherSuccessTransaction(transaction: RewardPayment): Completable {
+    return appcoinsRewardsBuyInteract.getVouchersData(transaction.txId)
+        .subscribeOn(networkScheduler)
+        .observeOn(viewScheduler)
+        .flatMapCompletable { voucherModel ->
+          Completable.fromAction {
+            if (voucherModel.error.hasError || voucherModel.code == null
+                || voucherModel.redeemUrl == null) {
+              view.showError(R.string.unknown_error)
+            } else {
+              view.navigateToVouchersSuccess(voucherModel.code, voucherModel.redeemUrl)
+            }
+          }
+        }
   }
 
   private fun handleFraudFlow() {

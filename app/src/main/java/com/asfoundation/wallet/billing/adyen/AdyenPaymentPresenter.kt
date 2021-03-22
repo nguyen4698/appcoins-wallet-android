@@ -3,7 +3,7 @@ package com.asfoundation.wallet.billing.adyen
 import android.os.Bundle
 import androidx.annotation.StringRes
 import com.adyen.checkout.base.model.paymentmethods.PaymentMethod
-import com.appcoins.wallet.billing.Voucher
+import com.appcoins.wallet.bdsbilling.repository.TransactionType
 import com.appcoins.wallet.billing.adyen.AdyenBillingAddress
 import com.appcoins.wallet.billing.adyen.AdyenPaymentRepository
 import com.appcoins.wallet.billing.adyen.AdyenResponseMapper.Companion.REDIRECT
@@ -228,7 +228,7 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
                       .subscribeOn(networkScheduler)
                       .observeOn(viewScheduler)
                       .flatMapCompletable { bundle ->
-                        handleSuccessTransaction(bundle, paymentModel.voucher)
+                        handleSuccessTransaction(bundle, it)
                       }
                 }
                 isPaymentFailed(it.status) -> {
@@ -303,11 +303,9 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
   }
 
   private fun handleSuccessTransaction(bundle: Bundle,
-                                       voucher: Voucher?): Completable {
-    return if (voucher != null) {
-      Completable.fromAction {
-        navigator.navigateToVoucherSuccess(data.bonus, voucher.code, voucher.redeem)
-      }
+                                       paymentModel: PaymentModel): Completable {
+    return if (data.paymentData.type == TransactionType.VOUCHER.name) {
+      handleVoucherSuccessTransaction(paymentModel)
     } else {
       Completable.fromAction { view.showSuccess(data.isPreselected) }
           .andThen(Completable.timer(view.getAnimationDuration(),
@@ -315,6 +313,24 @@ class AdyenPaymentPresenter(private val view: AdyenPaymentView,
           .andThen(Completable.fromAction { navigator.finishPayment(bundle) })
     }
   }
+
+  private fun handleVoucherSuccessTransaction(paymentModel: PaymentModel): Completable {
+    return adyenPaymentInteractor.getVoucherData(paymentModel.hash)
+        .subscribeOn(networkScheduler)
+        .observeOn(viewScheduler)
+        .flatMapCompletable { voucherModel ->
+          Completable.fromAction {
+            if (voucherModel.error.hasError || voucherModel.code == null
+                || voucherModel.redeemUrl == null) {
+              view.showGenericError()
+            } else {
+              navigator.navigateToVoucherSuccess(voucherModel.code, voucherModel.redeemUrl,
+                  data.bonus)
+            }
+          }
+        }
+  }
+
 
   private fun retrieveFailedReason(uid: String): Completable {
     return adyenPaymentInteractor.getFailedTransactionReason(uid)
